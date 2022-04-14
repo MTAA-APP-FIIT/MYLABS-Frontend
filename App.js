@@ -12,6 +12,7 @@ import FriendsScreen from './screens/FriendsScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import WorkspaceScreen from './screens/WorkspaceScreen';
+import ProjectScreen from './screens/ProjectScreen';
 import { useFonts, Overlock_700Bold } from '@expo-google-fonts/overlock';
 
 const Stack = createNativeStackNavigator();
@@ -51,6 +52,7 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false}} name="Welcome" component={WelcomeScreen} />
         <Stack.Screen options={{ headerShown: false}} name="Register" component={RegisterScreen} />
         <Stack.Screen options={{ headerShown: false}} name="Login" component={LoginScreen} />
+        <Stack.Screen options={{ headerShown: false}} name="Project" component={ProjectScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
