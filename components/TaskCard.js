@@ -1,22 +1,23 @@
-import { StyleSheet, Text, View, TouchableOpacity, _View } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, _View,Image } from 'react-native'
 import React from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
+import { Entypo } from '@expo/vector-icons';
 
 const TaskCard = () => {
   return (
     <View>
         <TouchableOpacity style={styles.bottomCard}>
             <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient}>
-                <Text style={styles.iconLeft}>ikonka</Text>
+                <Image style={styles.profilePicture} source={require('../assets/images/taskIcon.png')} />
             </LinearGradient>
             <View style={styles.taskInfo}>
                 <Text style={styles.taskName}>Develop SIP Proxy</Text>
                 <Text style={styles.taskDate}>Due: Tuesday</Text>
             </View>
-            <View style={styles.iconRight}>
-                <Text>icon</Text>
-
+            <View style={styles.credentialsContainer}>
+                <Entypo name="chevron-right" size={32} color="grey" />
             </View>
+
         </TouchableOpacity>
     </View>
   )
@@ -37,6 +38,10 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         marginVertical: 16
     },
+    credentialsContainer: {
+        left: 30,
+        paddingTop: 35
+      },
     Gradient: {
         borderRadius: 25,
         width: 90,

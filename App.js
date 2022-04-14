@@ -12,7 +12,9 @@ import RegisterScreen from './screens/RegisterScreen';
 import FriendsScreen from './screens/FriendsScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import WorkspaceScreen from './screens/WorkspaceScreen';
+import WorkspaceScreenProjects from './screens/WorkspaceScreenProjects';
+import WorkspaceScreenTasks from './screens/WorkspaceScreenTasks';
+import WorkspaceScreenSchedule from './screens/WorkspaceScreenSchedule';
 import ProjectScreen from './screens/ProjectScreen';
 import { useFonts, Overlock_700Bold } from '@expo-google-fonts/overlock';
 
@@ -36,7 +38,7 @@ const TabNavigator = () => {
       ],
     }}>
       <Tab.Screen options={{ headerShown: false}} name="Settings" component={SettingsScreen}/>
-      <Tab.Screen options={{ headerShown: false}} name="Workspace" component={WorkspaceScreen}/>
+      <Tab.Screen options={{ headerShown: false}} name="Workspace" component={WorkspaceScreenProjects}/>
       <Tab.Screen options={{ headerShown: false}} name="Home" component={HomeScreen}/>
       <Tab.Screen options={{ headerShown: false}}name="Friends" component={FriendsScreen}/>
       <Tab.Screen options={{ headerShown: false}} name="Profile" component={ProfileScreen}/>
@@ -54,6 +56,8 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false}} name="Register" component={RegisterScreen} />
         <Stack.Screen options={{ headerShown: false}} name="Login" component={LoginScreen} />
         <Stack.Screen options={{ headerShown: false}} name="Project" component={ProjectScreen} />
+        <Stack.Screen options={{ headerShown: false}} name="WorkspaceTasks" component={WorkspaceScreenTasks} />
+        <Stack.Screen options={{ headerShown: false}} name="WorkspaceSchedule" component={WorkspaceScreenSchedule} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -61,7 +61,6 @@ const ProjectScreen = () => {
                 data={DATA}
                 renderItem={renderItem}
                 keyExtractor={item => item.id}
-                style={styles.listContainer}
             />
         </View>
         </View>
