@@ -1,23 +1,32 @@
-import { StyleSheet, Text, View, Button, ImageBackground, TouchableOpacity, TextInput } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, Button, ImageBackground, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native'
+import {React, useState} from 'react'
+import { ScrollView } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const RegisterScreen = ({navigation}) => {
+  const [name, setName] = useState([]);
+  const [username, setUsername] = useState([]);
+  const [position, setPosition] = useState([]);
+  const [birthdate, setBirthdate] = useState([]);
+
+ 
 
   return (
     <View style={{ flex:1}}>
       <ImageBackground source={require('../assets/images/background.png')} resizeMode="cover" style={styles.image}>
           <Text style={styles.heading}>REGISTER</Text>
           <Text style={styles.subHeading}>PLEASE SIGN UP</Text>
-          <View style={styles.container}>
-            <TextInput style={styles.input} placeholder="Full name" placeholderTextColor="#fff" keyboardType="default"/>
-            <TextInput style={styles.input} placeholder="Username" placeholderTextColor="#fff" keyboardType="default"/>
-            <TextInput style={styles.input} placeholder="Job position" placeholderTextColor="#fff" keyboardType="default"/>
-            <TextInput style={styles.input} placeholder="Birthdate" placeholderTextColor="#fff" keyboardType="default"/>
-            <TouchableOpacity style={styles.btnSecondary} onPress={() => navigation.navigate('TabNavigator')}>
-              <Text style={styles.btnSecondaryText}>Next</Text>
-            </TouchableOpacity>
+          <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
+              <TextInput style={styles.input} onChangeText={setName} placeholder="Full name" placeholderTextColor="#fff" keyboardType="default"/>
+              <TextInput style={styles.input} onChangeText={setUsername} placeholder="Username" placeholderTextColor="#fff" keyboardType="default"/>
+              <TextInput style={styles.input} onChangeText={setPosition} placeholder="Job position" placeholderTextColor="#fff" keyboardType="default"/>
+              <TextInput style={styles.input} onChangeText={setBirthdate} placeholder="Birthdate" placeholderTextColor="#fff" keyboardType="default"/>
+              <TouchableOpacity style={styles.btnSecondary} onPress={() => navigation.navigate('Register2', {name, username,position, birthdate})}>
+                <Text style={styles.btnSecondaryText}>Next</Text>
+              </TouchableOpacity>
             <Text style={styles.subText}>Already have an account ? <Text style={{fontWeight: 'bold'}} onPress={() => navigation.navigate('Login')}>Sign in.</Text></Text>
-          </View>
+          </KeyboardAvoidingView>
           <Text style={styles.footerText}>Created by Students of FIIT STU</Text>
       </ImageBackground>
     </View>
@@ -33,7 +42,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
     textAlign: 'center',
     letterSpacing: 10,
-    fontFamily: 'Overlock_700Bold'
+    fontFamily: 'Overlock_700Bold',
   },
   input: {
     width: '70%',
@@ -48,7 +57,7 @@ const styles = StyleSheet.create({
   },
   subText: {
     marginTop: 10,
-    color: 'white'
+    color: 'white',
   },
 
   subHeading: {
@@ -73,8 +82,6 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
-    paddingVertical: 20,
-    
   },
   
   btnSecondary: {

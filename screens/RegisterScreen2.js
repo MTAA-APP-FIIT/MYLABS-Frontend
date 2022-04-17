@@ -1,21 +1,23 @@
-import { StyleSheet, Text, View, Button, ImageBackground, TouchableOpacity, TextInput } from 'react-native'
-import React, { useState } from 'react'
-GLOBAL = require('../Global');
-import * as SecureStore from 'expo-secure-store';
+import { StyleSheet, Text, View, Button, ImageBackground, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native'
+import {React, useState} from 'react'
+import { ScrollView } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 
+const RegisterScreen = ({route, navigation}) => {
+  const name = route.params.name
+  const username = route.params.username
+  const position = route.params.position
+  const birthdate = route.params.birthdate
+  const [phone, setPhone] = useState([]);
+  const [email, setEmail] = useState([]);
+  const [password, setPassword] = useState([]);
 
-const LoginScreen = ({navigation}) => {
-  
   GLOBAL.USERNAME = false
 
   async function save(id) {
     GLOBAL.id = id
   }
-
-  const [count, setCount] = useState(0);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   function navigate(){
     navigation.navigate('TabNavigator')
@@ -30,7 +32,7 @@ const LoginScreen = ({navigation}) => {
       email: email,
       password: password
   };
-    fetch('http://192.168.68.106:3000/login/', {
+    fetch('http://localhost:3000/login/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -57,41 +59,49 @@ const LoginScreen = ({navigation}) => {
     });
   }
 
-  //onPress={() => navigation.navigate('TabNavigator')} 
+  const registerUser = async () => {
+        const response = await fetch('http://localhost:3000/register', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'}, 
+          body: JSON.stringify({name: name, username: username, password: password, email: email, phone: phone, position: position, birthdate:birthdate, profile_picture:"", created_at:"", updated_at:"", delete: false})
+        })
+      
+      }
+
   return (
-    
     <View style={{ flex:1}}>
       <ImageBackground source={require('../assets/images/background.png')} resizeMode="cover" style={styles.image}>
-          <Text style={styles.heading}>LOGIN</Text>
-          <Text style={styles.subHeading}>PLEASE SIGN IN</Text>
-          <View style={styles.container}>
-            <TextInput style={styles.input} onChangeText={setEmail} autoCapitalize='none' placeholder="E-Mail" placeholderTextColor="#fff" keyboardType="default"/>
-            <TextInput style={styles.input} onChangeText={setPassword} autoCapitalize='none' placeholder="Password" placeholderTextColor="#fff" keyboardType="default"/>
-            <TouchableOpacity style={styles.btnSecondary} onPress={
-              () => {
+          <Text style={styles.heading}>REGISTER</Text>
+          <Text style={styles.subHeading}>PLEASE SIGN UP</Text>
+          <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
+              <TextInput style={styles.input} onChangeText={setPhone} placeholder="Phone" placeholderTextColor="#fff" keyboardType="default"/>
+              <TextInput style={styles.input} onChangeText={setEmail} placeholder="E-Mail" placeholderTextColor="#fff" keyboardType="default"/>
+              <TextInput style={styles.input} onChangeText={setPassword} placeholder="Password" placeholderTextColor="#fff" keyboardType="default"/>
+              <TouchableOpacity style={styles.btnSecondary} onPress={() => {
+                registerUser()
                 onSubmitHandler()
-              }
-            }>
-              <Text style={styles.btnSecondaryText}>Login</Text>
-            </TouchableOpacity>
-            <Text style={styles.subText}>Don’t have an account ? <Text style={{fontWeight: 'bold'}} onPress={() => navigation.navigate('Register')}>Sign up.</Text></Text>
-          </View>
+              }}>
+                <Text style={styles.btnSecondaryText}>Register</Text>
+              </TouchableOpacity>
+            <Text style={styles.subText}>Already have an account ? <Text style={{fontWeight: 'bold'}} onPress={() => navigation.navigate('Login')}>Sign in.</Text></Text>
+          </KeyboardAvoidingView>
           <Text style={styles.footerText}>Created by Students of FIIT STU</Text>
       </ImageBackground>
     </View>
   )
 }
 
-export default LoginScreen
+export default RegisterScreen
 
 const styles = StyleSheet.create({
   heading: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 70,
+    fontSize: 50,
     textAlign: 'center',
     letterSpacing: 10,
-    fontFamily: 'Overlock_700Bold'
+    fontFamily: 'Overlock_700Bold',
   },
   input: {
     width: '70%',
@@ -106,7 +116,7 @@ const styles = StyleSheet.create({
   },
   subText: {
     marginTop: 10,
-    color: 'white'
+    color: 'white',
   },
 
   subHeading: {
@@ -131,8 +141,6 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
-    paddingVertical: 20,
-    
   },
   
   btnSecondary: {
