@@ -4,53 +4,77 @@ import NavButton from '../components/NavButton'
 import { Entypo } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import ProjectCard from '../components/ProjectCard';
+import { useNavigation } from '@react-navigation/native';
+GLOBAL = require('../Global');
 
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-];
 
-const renderItem = ({ item }) => (
-  <Item title={item.title} />
-);
+const WorkspaceScreen = () => {
+  const navigation = useNavigation();
+  const [projects, setProjects] = useState([]);
+  const [projectsLength, setProjectsLength] = useState([]);
+  const [selectedProjects, setSelectedProjects] = useState([]);
 
-const Item = ({ title, navigation}) => (
-  <View style={styles.itemContainer}>
-        <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>
-            <TouchableOpacity style={styles.Card}>
-                <View style={styles.DayContainer}>
-                    <Text style={styles.CardDay}>Tuesday</Text>
-                </View>
-                <View style={styles.TextContainer}>
-                    <Text style={styles.CardHeading}>MTAA</Text>
-                    <Text style={styles.CardDescription}>Semesteral project</Text>
-                </View>
-                <View style={styles.BarContainer}>
-                    <Text style={styles.CardBar}>Tuto bude bar </Text>
-                </View>
-            </TouchableOpacity>
-        </LinearGradient>
-    </View>
+  const renderItem = ({ item }) => (
+    <Item name={item.name} description={item.description} date={item.date} id={item.id}/>
+  );
   
-);
+  const Item = ({name, position, id, date, description}) => (
+    <View style={styles.itemContainer}>
+          <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>
+              <TouchableOpacity onPress={() => navigation.navigate('Project', {projectId: id})} style={styles.Card}>
+                  <View style={styles.DayContainer}>
+                      <Text style={styles.CardDay}>{date}</Text>
+                  </View>
+                  <View style={styles.TextContainer}>
+                      <Text style={styles.CardHeading}>{name}</Text>
+                      <Text style={styles.CardDescription}>{description}</Text>
+                  </View>
+                  <View style={styles.BarContainer}>
+                      {/* <Text style={styles.CardBar}>Tuto bude bar </Text> */}
+                  </View>
+              </TouchableOpacity>
+          </LinearGradient>
+      </View>
+    
+  );
 
-const WorkspaceScreen = ({navigation}) => {
+   const projectsInfo = async () => {
+    try{
+      const response = await fetch(`http://localhost:3000/projects/owner/${GLOBAL.id}`, {
+        headers: {
+          'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'
+        },
+      })
+      const jsonRes = await response.json();
+      // console.log(jsonRes)
+
+      setProjectsLength(jsonRes.length)
+      setProjects(jsonRes)
+      // console.log(projectsLength)
+
+      const array = []
+      var obj = Object.values(projects);
+      for (let i = 0; i < projectsLength; i++) { 
+          const response2 = await fetch('http://localhost:3000/projects/' + obj[i].id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+          array.push(await response2.json())
+      }
+      setSelectedProjects(array)
+      // console.log(selectedProjects +'ahoj')
+
+
+    } catch(err){
+      console.error(err)
+    }
+
+  }
+
+
+  useEffect(() => {
+    projectsInfo();
+  }, []);
+
   return (
     <View style={{backgroundColor: '#F7F9FC', flex: 1}}>
-
-
-      
-
 
     <View style={styles.ContainerNavButton}>
       <NavButton></NavButton>
@@ -81,30 +105,14 @@ const WorkspaceScreen = ({navigation}) => {
       </View>
 
     <FlatList
-      data={DATA}
+      data={projects}
       renderItem={renderItem}
-      keyExtractor={item => item.id}
+      keyExtractor={projects.id}
       style={styles.listContainer}
     />
 
     
   </View>
-    // <View style={{backgroundColor: '#F7F9FC', flex: 1}}>
-    //   <View style={styles.ContainerNavButton}>
-    //     <NavButton></NavButton>
-    //   </View>
-    //   <Text style={styles.heading}>Workspace</Text>
-
-      
-    //   <Pressable style={styles.plus} >
-    //     <Entypo name="plus" size={32} color="grey" />
-    //   </Pressable>
-
-    
-
-    // </View>
-
-    
   )
 }
 

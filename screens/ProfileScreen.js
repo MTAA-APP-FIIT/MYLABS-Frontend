@@ -32,7 +32,8 @@ const ProfileScreen = ({navigation}) => {
 
   const profileInfo = async () => {
     try{
-      const response = await fetch('http://localhost:3000/users/' + GLOBAL.id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+      const response = await fetch('http://localhost:3000/users/' + GLOBAL.id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08', 
+      'Content-Type': 'application/json'}})
       const jsonRes = await response.json();
       setResult(jsonRes)
     } catch{
@@ -43,7 +44,8 @@ const ProfileScreen = ({navigation}) => {
 
   const friendsInfo = async () => {
     try{
-      const response = await fetch('http://localhost:3000/users/' + GLOBAL.id + '/friends', {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+      const response = await fetch('http://localhost:3000/users/' + GLOBAL.id + '/friends', {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08', 
+      'Content-Type': 'application/json'}})
       const jsonRes = await response.json();
       setFriends(jsonRes.length)
     } catch{

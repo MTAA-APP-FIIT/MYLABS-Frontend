@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, _View,Image } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, _View, Image } from 'react-native'
 import React from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo } from '@expo/vector-icons';

@@ -5,32 +5,48 @@ import { Entypo } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import ProjectCard from '../components/ProjectCard';
 import TaskCard from '../components/TaskCard';
+GLOBAL = require('../Global');
 
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-];
+const WorkspaceScreen = ({navigation}) => {
+  const [tasks, setTasks] = useState([]);
 
-const renderItem = ({ item }) => (
-    <Item title={item.title} />
+  const tasksInfo = async () => {
+    try{
+      const response = await fetch(`http://localhost:3000/tasks/owner/${GLOBAL.id}`, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+      const jsonRes = await response.json();
+      setTasks(jsonRes)
+    } catch (err){
+      
+    }
+  }
+
+  const renderItem = ({ item }) => (
+    <Item name={item.name} end={item.end}/>
   );
 
-  const Item = ({ title }) => (
-    <TaskCard></TaskCard>
+  const Item = ({ name, end }) => (
+    <View>
+        <TouchableOpacity style={styles.bottomCard}>
+            <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient}>
+                <Image style={styles.profilePicture} source={require('../assets/images/taskIcon.png')} />
+            </LinearGradient>
+            <View style={styles.taskInfo}>
+                <Text style={styles.taskName}>{name}</Text>
+                <Text style={styles.taskDate}>Due: {end}</Text>
+            </View>
+            <View style={styles.credentialsContainer}>
+                <Entypo name="chevron-right" size={32} color="grey" />
+            </View>
+
+        </TouchableOpacity>
+    </View>
     
   );
 
-const WorkspaceScreen = ({navigation}) => {
+  useEffect(() => {
+    tasksInfo();
+  }, []);
+
   return (
     <View style={{backgroundColor: '#F7F9FC', flex: 1}}>
 
@@ -69,7 +85,7 @@ const WorkspaceScreen = ({navigation}) => {
       </View>
 
     <View style={styles.createTask}>
-        <TouchableOpacity style={styles.bottomCard}>
+        <TouchableOpacity style={styles.bottomCard} onPress={() => navigation.navigate('CreateTask')}>
             <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient}>
                 <Entypo name="plus" size={60} color="white" />
             </LinearGradient>
@@ -83,13 +99,15 @@ const WorkspaceScreen = ({navigation}) => {
         </TouchableOpacity>
     </View>
 
-      <FlatList
-      data={DATA}
-      contentContainerStyle={{alignItems: 'center'}}
-      renderItem={renderItem}
-      keyExtractor={item => item.id}
-      style={styles.listContainer}
-    />
+    <View style={styles.tasksSection}>
+
+            <FlatList
+                contentContainerStyle={{alignItems: 'center'}}
+                data={tasks}
+                renderItem={renderItem}
+                keyExtractor={tasks.id}
+            />
+        </View>
 
     
   </View>
@@ -139,6 +157,9 @@ const styles = StyleSheet.create({
   listContainer: {
     top: 150,
   },
+  tasksSection: {
+    top: 120
+},
     Card: {
         width: 200,
         height: 200,
