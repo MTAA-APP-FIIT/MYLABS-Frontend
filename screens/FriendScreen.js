@@ -75,7 +75,7 @@ const FriendScreen = ({route, navigation}) => {
                 <Text style={styles.category}> Position: </Text> 
                 <Text style={styles.categoryValue}> {result.position} </Text>
             </View>
-            <TouchableOpacity style={styles.btnSecondary} onPress={() => navigation.navigate('TabNavigator')}>
+            <TouchableOpacity style={styles.btnSecondary} onPress={() => navigation.navigate('Video', {userId: userId})}>
                 <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>
                     <Text style={styles.btnSecondaryText}>Call</Text>
                 </LinearGradient>

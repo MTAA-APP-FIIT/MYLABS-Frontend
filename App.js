@@ -25,6 +25,7 @@ import RegisterScreen2 from './screens/RegisterScreen2';
 import CreateTaskScreen from './screens/CreateTaskScreen';
 import TaskScreen from  './screens/TaskScreen';
 import EditTaskScreen from './screens/EditTaskScreen';
+import VideoScreen from './screens/VideoScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -91,6 +92,7 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false}} name="CreateTask" component={CreateTaskScreen} />
         <Stack.Screen options={{ headerShown: false}} name="Task" component={TaskScreen} />
         <Stack.Screen options={{ headerShown: false}} name="EditTask" component={EditTaskScreen} />
+        <Stack.Screen options={{ headerShown: false}} name="Video" component={VideoScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
