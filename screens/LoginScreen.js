@@ -11,6 +11,7 @@ const LoginScreen = ({navigation}) => {
 
   async function save(id) {
     GLOBAL.id = id
+    console.log('User ID: ' + GLOBAL.id)
   }
 
   const [count, setCount] = useState(0);
@@ -42,7 +43,7 @@ const LoginScreen = ({navigation}) => {
       email: email,
       password: password
   };
-    fetch('http://192.168.68.106:3000/login/', {
+    fetch('http://localhost:3000/login/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -51,7 +52,6 @@ const LoginScreen = ({navigation}) => {
     })
     .then(async res => { 
         try {
-
             
             if (res.status !== 200) {
               setIsError(true);
