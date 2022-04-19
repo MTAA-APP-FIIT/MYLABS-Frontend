@@ -23,6 +23,7 @@ import FriendRequestsScreen from './screens/FriendRequests'
 import AddFriendScreen from './screens/AddFriendScreen';
 import RegisterScreen2 from './screens/RegisterScreen2';
 import CreateTaskScreen from './screens/CreateTaskScreen';
+import TaskScreen from  './screens/TaskScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -88,6 +89,7 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false}} name="WorkspaceTasks" component={WorkspaceScreenTasks} />
         <Stack.Screen options={{ headerShown: false}} name="WorkspaceSchedule" component={WorkspaceScreenSchedule} />
         <Stack.Screen options={{ headerShown: false}} name="CreateTask" component={CreateTaskScreen} />
+        <Stack.Screen options={{ headerShown: false}} name="Task" component={TaskScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -18,7 +18,7 @@ const WorkspaceScreen = () => {
     <Item name={item.name} description={item.description} date={item.date} id={item.id}/>
   );
   
-  const Item = ({name, position, id, date, description}) => (
+  const Item = ({name, id, date, description}) => (
     <View style={styles.itemContainer}>
           <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>
               <TouchableOpacity onPress={() => navigation.navigate('Project', {projectId: id})} style={styles.Card}>

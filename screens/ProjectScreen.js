@@ -19,12 +19,12 @@ const ProjectScreen = ({route, navigation}) => {
   const [selectedTasks, setSelectedTasks] = useState([]);
 
   const renderItem = ({ item }) => (
-    <Item name={item.name} end={item.end}/>
+    <Item name={item.name} end={item.end} id={item.id}/>
   );
 
-  const Item = ({ name, end }) => (
+  const Item = ({ name, end, id}) => (
     <View>
-        <TouchableOpacity style={styles.bottomCard}>
+        <TouchableOpacity style={styles.bottomCard} onPress={() => navigation.navigate('Task', {taskId: id})}>
             <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient}>
                 <Image style={styles.profilePicture} source={require('../assets/images/taskIcon.png')} />
             </LinearGradient>
