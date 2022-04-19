@@ -96,7 +96,7 @@ export default FriendScreen
 
 const styles = StyleSheet.create({
   chevron: {
-    top:100,
+    top:80,
     left: 25
   },
     container: {
@@ -110,9 +110,9 @@ const styles = StyleSheet.create({
         paddingBottom: 25
     },
     ContainerNavButton: {
-        position: 'absolute',
-        right: 20,
-        top: 80
+      position: 'absolute',
+      right: 20,
+      top: 80
       },
     profilePicture: {
         width: 125,

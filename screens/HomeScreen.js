@@ -4,13 +4,13 @@ import NavBar from '../components/NavBar.js'
 import ProjectCard from '../components/ProjectCard.js'
 import NavButton from '../components/NavButton.js'
 
+
 const HomeScreen = ({navigation}) => {
   return (
     <View style={{ flex:1, justifyContent: 'center', alignItems: 'center'}}>
       <View style={styles.ContainerNavButton}>
-        <NavButton></NavButton>
+          <NavButton></NavButton>
       </View>
-        
         <Text>Home Screen</Text>
         <NavBar></NavBar>
         <ProjectCard onPress={() => navigation.navigate('Project')}></ProjectCard>

@@ -28,7 +28,6 @@ import TaskScreen from  './screens/TaskScreen';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-
 const TabNavigator = () => {
   let [fontsLoaded] = useFonts({
     Overlock_700Bold,

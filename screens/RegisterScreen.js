@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, ImageBackground, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native'
+import { StyleSheet, Text, View, Button, ImageBackground, TouchableOpacity, TextInput, KeyboardAvoidingView, DatePickerIOS } from 'react-native'
 import {React, useState} from 'react'
 import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -7,9 +7,15 @@ const RegisterScreen = ({navigation}) => {
   const [name, setName] = useState([]);
   const [username, setUsername] = useState([]);
   const [position, setPosition] = useState([]);
-  const [birthdate, setBirthdate] = useState([]);
+  
 
- 
+  function validator(){
+    if(name < 1 || username < 1 || position < 1){
+      alert("Please fill all fields");
+      return false
+    }
+    return true
+  }
 
   return (
     <View style={{ flex:1}}>
@@ -21,8 +27,12 @@ const RegisterScreen = ({navigation}) => {
               <TextInput style={styles.input} onChangeText={setName} placeholder="Full name" placeholderTextColor="#fff" keyboardType="default"/>
               <TextInput style={styles.input} onChangeText={setUsername} placeholder="Username" placeholderTextColor="#fff" keyboardType="default"/>
               <TextInput style={styles.input} onChangeText={setPosition} placeholder="Job position" placeholderTextColor="#fff" keyboardType="default"/>
-              <TextInput style={styles.input} onChangeText={setBirthdate} placeholder="Birthdate" placeholderTextColor="#fff" keyboardType="default"/>
-              <TouchableOpacity style={styles.btnSecondary} onPress={() => navigation.navigate('Register2', {name, username,position, birthdate})}>
+              
+              <TouchableOpacity style={styles.btnSecondary} onPress={() => {
+                if (validator()){
+                  navigation.navigate('Register2', {name, username,position})
+                }
+              }}>
                 <Text style={styles.btnSecondaryText}>Next</Text>
               </TouchableOpacity>
             <Text style={styles.subText}>Already have an account ? <Text style={{fontWeight: 'bold'}} onPress={() => navigation.navigate('Login')}>Sign in.</Text></Text>

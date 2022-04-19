@@ -15,6 +15,28 @@ const RegisterScreen = ({route, navigation}) => {
 
   GLOBAL.USERNAME = false
 
+
+
+  function validator(){
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const reg2 = /^[0-9]*$/;
+    if(password < 1 || email < 1 || phone < 1){
+      alert("Please fill all fields");
+      return false
+    }
+    if (reg2.test(phone) === false) {
+      alert("Wrong phone");
+      return false
+    }
+    if (reg.test(email) === false){
+        alert("Wrong E-Mail");
+        return false
+    }
+    return true
+  }
+
+ 
+
   async function save(id) {
     GLOBAL.id = id
   }
@@ -63,7 +85,7 @@ const RegisterScreen = ({route, navigation}) => {
         const response = await fetch('http://localhost:3000/register', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'}, 
-          body: JSON.stringify({name: name, username: username, password: password, email: email, phone: phone, position: position, birthdate:birthdate, profile_picture:"", created_at:"", updated_at:"", delete: false})
+          body: JSON.stringify({name: name, username: username, password: password, email: email, phone: phone, position: position, birthdate:"", profile_picture:"", created_at:"", updated_at:"", delete: false})
         })
       
       }
@@ -79,8 +101,11 @@ const RegisterScreen = ({route, navigation}) => {
               <TextInput style={styles.input} onChangeText={setEmail} placeholder="E-Mail" placeholderTextColor="#fff" keyboardType="default"/>
               <TextInput style={styles.input} onChangeText={setPassword} placeholder="Password" placeholderTextColor="#fff" keyboardType="default"/>
               <TouchableOpacity style={styles.btnSecondary} onPress={() => {
-                registerUser()
-                onSubmitHandler()
+                if(validator()){
+                  registerUser()
+                  onSubmitHandler()
+                }
+                
               }}>
                 <Text style={styles.btnSecondaryText}>Register</Text>
               </TouchableOpacity>
