@@ -16,6 +16,7 @@ const FriendsScreen = () => {
   const [requests, setRequests] = useState([]);
   const [requestProfiles, setRequestProfiles] = useState([]);
   const [profiles, setProfiles] = useState([]);
+  const [change, setChange] = useState(false)
 
   const [isLoading, setLoading] = useState(true);
 
@@ -107,9 +108,41 @@ const FriendsScreen = () => {
     setLoading(false)
   }
   
-  useEffect(() => {
-    friendsInfo()
-  }, []);
+  useEffect( async () => {
+    try{
+      const response = await fetch('http://localhost:3000/users/' + GLOBAL.id + '/friends', {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+      const jsonRes = await response.json();
+
+      const filteredFriends = jsonRes.filter(x => x.state === true);
+      const filteredRequests = jsonRes.filter(x => x.state === false);
+
+      if (filteredFriends.length > 0){
+        setFriendsLength(filteredFriends.length)
+        setFriends(filteredFriends)
+      }
+      else {
+        setFriendsLength(0)
+      }
+      if (filteredRequests.length > 0){
+        setRequests(filteredRequests.length)
+        setRequestProfiles(filteredRequests)
+      }else {
+        setRequests(0)
+      }
+
+    } catch{
+      console.error("Problem")
+    }
+
+    const array = []
+    var obj = Object.values(friends);
+    for (let i = 0; i < friendsLength; i++) { 
+        const response2 = await fetch('http://localhost:3000/users/' + obj[i].friend_id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+        array.push(await response2.json())
+    }
+    setChange(true)
+    setProfiles(array)
+  }, [change]);
 
 
   return (
@@ -145,13 +178,13 @@ const FriendsScreen = () => {
       </TouchableOpacity>
       
 
-      { isLoading==false ? <FlatList
+       <FlatList
         extraData={profiles}
         data={profiles}
         renderItem={renderItem}
         keyExtractor={profiles.id}
         style={styles.listContainer}
-      /> : <Text style={styles.EmptySate}> No Friends </Text> }
+      />
       
       
     </View>

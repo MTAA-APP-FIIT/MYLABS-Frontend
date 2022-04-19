@@ -113,7 +113,7 @@ const ProfileScreen = ({navigation}) => {
       }).then(fetch('http://localhost:3000/users/' + GLOBAL.id, {
         method: 'PATCH',
         headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
-        body: JSON.stringify({profile_picture: premenna.uri})}));
+        body: JSON.stringify({profile_picture: premenna.name})}));
     } catch (error) {
       console.log(error);
     }
