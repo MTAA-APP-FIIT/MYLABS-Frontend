@@ -1,36 +1,81 @@
-import { StyleSheet, Text, View, Button, ScrollView, FlatList} from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, Button, ScrollView, FlatList, TouchableOpacity, Image} from 'react-native'
 import NavBar from '../components/NavBar.js'
 import ProjectCard from '../components/ProjectCard.js'
 import NavButton from '../components/NavButton.js'
 import TaskCard from '../components/TaskCard.js'
+import { LinearGradient } from 'expo-linear-gradient';
+import { Entypo } from '@expo/vector-icons';
+import {React, useState, useEffect} from 'react'
+GLOBAL = require('../Global');
 
 
-const DATA = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'First Item',
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Second Item',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'Third Item',
-    },
-  ];
-  
+const ProjectScreen = ({route, navigation}) => {
+
+  const projectId = route.params.projectId
+  // console.log('project ID: ' + projectId)
+  const [project, setProject] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [tasksLength, setTasksLength] = useState([]);
+  const [selectedTasks, setSelectedTasks] = useState([]);
+
   const renderItem = ({ item }) => (
-    <Item title={item.title} />
+    <Item name={item.name} end={item.end} id={item.id}/>
   );
 
-  const Item = ({ title }) => (
-    <TaskCard></TaskCard>
+  const Item = ({ name, end, id}) => (
+    <View>
+        <TouchableOpacity style={styles.bottomCard} onPress={() => navigation.navigate('Task', {taskId: id})}>
+            <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient}>
+                <Image style={styles.profilePicture} source={require('../assets/images/taskIcon.png')} />
+            </LinearGradient>
+            <View style={styles.taskInfo}>
+                <Text style={styles.taskName}>{name}</Text>
+                <Text style={styles.taskDate}>Due: {end}</Text>
+            </View>
+            <View style={styles.credentialsContainer}>
+                <Entypo name="chevron-right" size={32} color="grey" />
+            </View>
+
+        </TouchableOpacity>
+    </View>
     
   );
 
-const ProjectScreen = () => {
+  const projectInfo = async () => {
+    try{
+      const response = await fetch(`http://localhost:3000/projects/${projectId}`, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+      const jsonRes = await response.json();
+      setProject(jsonRes)
+    } catch{
+      console.error(error)
+    }
+  }
+
+  const tasksInfo = async () => {
+    try{
+      const response = await fetch(`http://localhost:3000/tasks/project/${projectId}`, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+      const jsonRes = await response.json();
+      setTasksLength(jsonRes.length)
+      setTasks(jsonRes)
+
+      const array = []
+      var obj = Object.values(tasks);
+      for (let i = 0; i < tasksLength; i++) { 
+          const response2 = await fetch('http://localhost:3000/tasks/' + obj[i].id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+          array.push(await response2.json())
+      }
+      setSelectedTasks(array)
+    } catch (err){
+      
+    }
+  }
+
+  useEffect(() => {
+    projectInfo();
+    tasksInfo();
+  }, []);
+
+
   return (
     <View style={{backgroundColor: '#F7F9FC', flex: 1}}>
         <View style={styles.ContainerNavButton}>
@@ -38,30 +83,29 @@ const ProjectScreen = () => {
         </View>
 
         <View style={styles.heading}>
-            <Text style={styles.projectName}>MTAA</Text>
-            <Button style={styles.collaboratorsButton} title="Collaborators" onPress={() => navigation.navigate('Welcome')}/>
+            <Text style={styles.projectName}>{project.name}</Text>
+            {/* <Button style={styles.collaboratorsButton} title="Collaborators" onPress={() => navigation.navigate('Welcome')}/> */}
         </View>
 
         <View>
-        <Text style={styles.projectDescription}>This is description of our project</Text>
+        <Text style={styles.projectDescription}>{project.description}</Text>
 
 
         <View style={styles.containerInfo}>
-            <Text style={styles.category}> Owner </Text> 
-            <Text style={styles.categoryValue}> TheFattestNinja </Text>
+          <Text style={styles.category}> Project ID: </Text> 
+            <Text style={styles.categoryValue}> {project.id} </Text>
             <Text style={styles.category}> Deadline: </Text> 
-            <Text style={styles.categoryValue}> 21.4.2022 </Text>
+            <Text style={styles.categoryValue}> {project.deadline} </Text>
         </View>
 
         <View style={styles.tasksSection}>
-            <Text style={styles.taskToDo}>Task to do</Text>
+            <Text style={styles.taskToDo}>Tasks to do</Text>
 
             <FlatList
                 contentContainerStyle={{alignItems: 'center'}}
-                data={DATA}
+                data={tasks}
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
-                style={styles.listContainer}
+                keyExtractor={tasks.id}
             />
         </View>
         </View>
@@ -131,5 +175,44 @@ const styles = StyleSheet.create({
       },
       collaboratorsButton: {
           alignSelf: 'flex-end'
-      }
+      },
+      bottomCard: {
+        backgroundColor: '#fff',
+        width: 325,
+        height: 100,
+        borderRadius: 25,
+        flexDirection: "row",
+        shadowColor: "black",
+        shadowOffset: {width: 2, height: 4},
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        marginVertical: 16
+    },
+    credentialsContainer: {
+        left: 30,
+        paddingTop: 35
+      },
+    Gradient: {
+        borderRadius: 25,
+        width: 90,
+        height: 100,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    taskInfo: {
+        justifyContent: 'center',
+        margin: 15,
+    },
+    iconRight: {
+        justifyContent: 'center'
+    },
+    taskName: {
+        fontSize: 15,
+        color: 'grey',
+        fontWeight: 'bold'
+    },
+    taskDate: {
+        fontSize: 12,
+        color: 'grey',
+    },
 })

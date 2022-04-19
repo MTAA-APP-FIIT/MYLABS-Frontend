@@ -12,7 +12,9 @@ import RegisterScreen from './screens/RegisterScreen';
 import FriendsScreen from './screens/FriendsScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import WorkspaceScreen from './screens/WorkspaceScreen';
+import WorkspaceScreen from './screens/WorkspaceScreenProjects';
+import WorkspaceScreenSchedule from './screens/WorkspaceScreenSchedule';
+import WorkspaceScreenTasks from './screens/WorkspaceScreenTasks';
 import ProjectScreen from './screens/ProjectScreen';
 import { useFonts, Overlock_700Bold } from '@expo-google-fonts/overlock';
 import FriendScreen from './screens/FriendScreen';
@@ -20,6 +22,8 @@ import EditProfileScreen from './screens/EditProfileScreen';
 import FriendRequestsScreen from './screens/FriendRequests'
 import AddFriendScreen from './screens/AddFriendScreen';
 import RegisterScreen2 from './screens/RegisterScreen2';
+import CreateTaskScreen from './screens/CreateTaskScreen';
+import TaskScreen from  './screens/TaskScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -81,6 +85,10 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false}} name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen options={{ headerShown: false}} name="FriendRequests" component={FriendRequestsScreen} />
         <Stack.Screen options={{ headerShown: false}} name="AddFriend" component={AddFriendScreen} />
+        <Stack.Screen options={{ headerShown: false}} name="WorkspaceTasks" component={WorkspaceScreenTasks} />
+        <Stack.Screen options={{ headerShown: false}} name="WorkspaceSchedule" component={WorkspaceScreenSchedule} />
+        <Stack.Screen options={{ headerShown: false}} name="CreateTask" component={CreateTaskScreen} />
+        <Stack.Screen options={{ headerShown: false}} name="Task" component={TaskScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

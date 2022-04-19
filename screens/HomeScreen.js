@@ -13,7 +13,7 @@ const HomeScreen = ({navigation}) => {
       </View>
         <Text>Home Screen</Text>
         <NavBar></NavBar>
-        <ProjectCard></ProjectCard>
+        <ProjectCard onPress={() => navigation.navigate('Project')}></ProjectCard>
         
         <Button title="Go to welcome" onPress={() => navigation.navigate('Welcome')}/>
     </View>
