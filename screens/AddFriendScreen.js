@@ -46,7 +46,7 @@ export default AddFriendScreen
 
 const styles = StyleSheet.create({
     heading: {
-        top: 40,
+        top: 70,
         left: 25,
         fontSize: 30,
         fontWeight: 'bold'
@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
         color: '#999'
     },
     chevron: {
+        top: 20,
         left: 25
       },
     container: {

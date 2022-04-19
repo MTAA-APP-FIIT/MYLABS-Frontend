@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
         left: 25
       },
     container: {
-        top: 60,
+        top: 70,
     },
     input: {
         height: 40,

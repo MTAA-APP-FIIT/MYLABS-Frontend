@@ -24,7 +24,6 @@ import RegisterScreen2 from './screens/RegisterScreen2';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-
 const TabNavigator = () => {
   let [fontsLoaded] = useFonts({
     Overlock_700Bold,

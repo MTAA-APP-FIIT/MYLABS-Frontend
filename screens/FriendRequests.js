@@ -86,12 +86,13 @@ const FriendRequests = ({route, navigation}) => {
                 <Entypo name='chevron-left' size={32} color="black" onPress={() => navigation.goBack()}></Entypo>
         </TouchableOpacity>
         <Text style={styles.heading}>Friend requests</Text>
-        <FlatList
+        { requests.length ? <FlatList
         data={requests}
         renderItem={renderItem}
         keyExtractor={requests.id}
         style={styles.listContainer}
-      />
+      /> : <Text style={styles.EmptyState}> No Requests </Text>}
+        
     </View>
   )
 }
@@ -99,12 +100,17 @@ const FriendRequests = ({route, navigation}) => {
 export default FriendRequests
 
 const styles = StyleSheet.create({
+  EmptyState: {
+    alignSelf: 'center',
+    top: 180,
+    fontWeight: 'bold'
+  },
   chevron: {
     left: 25,
-    top: 90,
+    top: 70,
   },
   heading: {
-      top: 120,
+      top: 90,
       left: 25,
       fontSize: 30,
       fontWeight: 'bold'

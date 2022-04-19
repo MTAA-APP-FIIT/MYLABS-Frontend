@@ -17,6 +17,10 @@ const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [isError, setIsError] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isLogin, setIsLogin] = useState(true);
+
   function navigate(){
     navigation.navigate('TabNavigator')
   }
@@ -25,6 +29,14 @@ const LoginScreen = ({navigation}) => {
     navigation.navigate('Welcome')
   }
 
+  function validator(){
+    if (email.length < 1 || password.length < 1){
+      setIsError(true);
+      setMessage("Fill both fields");
+      return false
+    }
+    return true
+  }
   const onSubmitHandler = () => {
     const payload = { 
       email: email,
@@ -39,14 +51,15 @@ const LoginScreen = ({navigation}) => {
     })
     .then(async res => { 
         try {
-            const jsonRes = await res.json();
+
+            
             if (res.status !== 200) {
-              navigate2()
+              setIsError(true);
+              setMessage("Wrong credentials");
             } else {
+              const jsonRes = await res.json();
               save(jsonRes.id)
-              navigate()
-              //loginFunc(jsonRes.token);
-                
+              navigate()   
             }
             } catch (err) {
             console.log(err);
@@ -56,6 +69,11 @@ const LoginScreen = ({navigation}) => {
         console.log(err);
     });
   }
+
+  const getMessage = () => {
+    const status = isError ? `Error: ` : `Success: `;
+    return status + message;
+}
 
   //onPress={() => navigation.navigate('TabNavigator')} 
   return (
@@ -67,9 +85,12 @@ const LoginScreen = ({navigation}) => {
           <View style={styles.container}>
             <TextInput style={styles.input} onChangeText={setEmail} autoCapitalize='none' placeholder="E-Mail" placeholderTextColor="#fff" keyboardType="default"/>
             <TextInput style={styles.input} onChangeText={setPassword} autoCapitalize='none' placeholder="Password" placeholderTextColor="#fff" keyboardType="default"/>
+            <Text style={[styles.message, {color: isError ? 'red' : 'green'}]}>{message ? getMessage() : null}</Text>
             <TouchableOpacity style={styles.btnSecondary} onPress={
               () => {
-                onSubmitHandler()
+                if(validator()){
+                  onSubmitHandler()
+                }
               }
             }>
               <Text style={styles.btnSecondaryText}>Login</Text>

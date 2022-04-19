@@ -4,23 +4,46 @@ import NavButton from '../components/NavButton.js'
 import { LinearGradient } from 'expo-linear-gradient';
 GLOBAL = require('../Global');
 import * as ImagePicker from 'expo-image-picker';
+import DefaultImage from '../assets/images/Avatar.png';
 
+const DEFAULT_IMAGE = Image.resolveAssetSource(DefaultImage).uri;
 
 const ProfileScreen = ({navigation}) => {
 
   const [image, setImage] = useState(null);
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
 
-    console.log(result);
-
+    let myPromise = new Promise(async function(myResolve, myReject) {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        
+        })
+        myResolve(result); // when successful
+        myReject();  // when error
+      });
+      
+      // "Consuming Code" (Must wait for a fulfilled Promise)
+      myPromise.then(
+        function(result) { 
+          setSelectedImage({
+            uri: result.uri,
+            name: 'SomeImageName.jpg',
+            type: 'image/jpg',
+          });
+          const premenna = {
+            uri: result.uri,
+            name: 'SomeImageName.jpg',
+            type: 'image/jpg',
+          }
+          setImage(result.uri)
+          upload(premenna) },
+        function(error) { console.log(error)}
+     );
+    
     if (!result.cancelled) {
       setImage(result.uri);
     }
@@ -75,6 +98,24 @@ const ProfileScreen = ({navigation}) => {
     })
   }, []);
   
+  let [selectedImage, setSelectedImage] = useState("");
+
+  function upload(premenna) {
+    try {
+      const data = new FormData();
+      data.append("image", premenna);
+  
+      fetch('http://localhost:3000/img', {
+        method: "POST",
+        body: data,
+      }).then(fetch('http://localhost:3000/users/' + GLOBAL.id, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
+        body: JSON.stringify({profile_picture: premenna.uri})}));
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <View style={{backgroundColor: '#F7F9FC', flex: 1}}>
@@ -86,9 +127,11 @@ const ProfileScreen = ({navigation}) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <View style={styles.container}>
         <View>
-          <Image style={styles.tinyLogo} source={require('../assets/images/Avatar.png')} />
-          <Text style={styles.edit} onPress={pickImage} >Edit</Text>
-          {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+          { image ? <Image source={{uri:image}} style={styles.tinyLogo}/> : <Image source={{uri:DEFAULT_IMAGE}} style={styles.tinyLogo}/>}
+          <Text style={styles.edit} onPress={
+            pickImage
+          } >Edit</Text>
+          
         </View>
         <View style={styles.credentialsContainer}>
           <Text style={styles.name}>{result.name}</Text>
@@ -141,6 +184,7 @@ const styles = StyleSheet.create({
   tinyLogo: {
     width: 85,
     height: 85,
+    borderRadius: 50
   },
   container: {
     top: 174,
