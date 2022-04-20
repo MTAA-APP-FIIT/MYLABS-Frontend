@@ -83,12 +83,12 @@ const WorkspaceScreen = () => {
 
     
     <Pressable style={styles.plus} >
-      <Entypo name="plus" size={32} color="grey" />
+      <Entypo name="plus" size={32} color="grey" onPress={() => navigation.navigate('CreateProject')} />
     </Pressable>
 
       <View style={styles.workspaceButtons}>
         
-        <TouchableOpacity style={styles.buttonSelected} onPress={() => navigation.navigate('Project')}>
+        <TouchableOpacity style={styles.buttonSelected} onClick={() => window.location.reload(false)}>
           <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.GradientButton}>
               <Text style={styles.btnSelectedText}>Projects</Text>
           </LinearGradient>

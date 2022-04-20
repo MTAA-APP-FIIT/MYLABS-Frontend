@@ -25,6 +25,7 @@ import RegisterScreen2 from './screens/RegisterScreen2';
 import CreateTaskScreen from './screens/CreateTaskScreen';
 import TaskScreen from  './screens/TaskScreen';
 import EditTaskScreen from './screens/EditTaskScreen';
+import CreateProjectScreen from './screens/CreateProjectScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -89,6 +90,7 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false}} name="WorkspaceTasks" component={WorkspaceScreenTasks} />
         <Stack.Screen options={{ headerShown: false}} name="WorkspaceSchedule" component={WorkspaceScreenSchedule} />
         <Stack.Screen options={{ headerShown: false}} name="CreateTask" component={CreateTaskScreen} />
+        <Stack.Screen options={{ headerShown: false}} name="CreateProject" component={CreateProjectScreen} />
         <Stack.Screen options={{ headerShown: false}} name="Task" component={TaskScreen} />
         <Stack.Screen options={{ headerShown: false}} name="EditTask" component={EditTaskScreen} />
       </Stack.Navigator>
