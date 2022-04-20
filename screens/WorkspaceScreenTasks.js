@@ -91,7 +91,7 @@ const WorkspaceScreen = ({navigation}) => {
                 renderItem={renderItem}
                 keyExtractor={tasks.id}
             />
-        </View>
+      </View>
 
     
   </View>
