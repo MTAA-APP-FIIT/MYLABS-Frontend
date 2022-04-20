@@ -16,7 +16,7 @@ const FriendScreen = ({route, navigation}) => {
       const response = await fetch('http://localhost:3000/users/' + userId, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
       const jsonRes = await response.json();
       setResult(jsonRes)
-    } catch{
+    } catch (error){
       console.error(error)
     }
     
@@ -27,7 +27,7 @@ const FriendScreen = ({route, navigation}) => {
       const response = await fetch('http://localhost:3000/users/' + userId + '/friends', {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
       const jsonRes = await response.json();
       setFriends(jsonRes.length)
-    } catch{
+    } catch (error){
       console.error(error)
     }
   }
