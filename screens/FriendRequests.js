@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
       fontWeight: 'bold'
   },
   itemContainer: {
+    justifyContent: 'space-between',
     alignSelf: 'center',
     marginVertical: 16,
     width: '80%',
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     elevation: 9,
     borderRadius: 20,
     paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 30,
     flexDirection:'row', 
     flexWrap:'wrap'
   },

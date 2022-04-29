@@ -111,7 +111,7 @@ const WorkspaceScreen = () => {
 
       <View style={styles.workspaceButtons}>
         
-        <TouchableOpacity style={styles.buttonSelected} onPress={() => navigation.navigate('Project')}>
+        <TouchableOpacity style={styles.buttonSelected} onClick={() => window.location.reload(false)}>
           <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.GradientButton}>
               <Text style={styles.btnSelectedText}>Projects</Text>
           </LinearGradient>

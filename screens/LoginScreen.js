@@ -2,11 +2,29 @@ import { StyleSheet, Text, View, Button, ImageBackground, TouchableOpacity, Text
 import React, { useState } from 'react'
 GLOBAL = require('../Global');
 import * as SecureStore from 'expo-secure-store';
-
+const { io } = require("socket.io-client");
 
 
 const LoginScreen = ({navigation}) => {
+
+  const socket = io("http://localhost:3000");
+
+  socket.on("connection", (args) => {
+    console.log('hello')
+  });
+
+  socket.emit('hello', "Works")
   
+  socket.on('updatedata', (arg) => {
+    console.log(arg)
+  })
+
+  /* const hello = () => {
+    socket.emit('hello', "Works")
+  }
+
+  hello() */
+
   GLOBAL.USERNAME = false
 
   async function save(id) {

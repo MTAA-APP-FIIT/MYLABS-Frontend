@@ -5,10 +5,25 @@ import { LinearGradient } from 'expo-linear-gradient';
 GLOBAL = require('../Global');
 import * as ImagePicker from 'expo-image-picker';
 import DefaultImage from '../assets/images/Avatar.png';
+const { io } = require("socket.io-client");
 
 const DEFAULT_IMAGE = Image.resolveAssetSource(DefaultImage).uri;
 
 const ProfileScreen = ({navigation}) => {
+
+  const [test, setTest] = useState("");
+  const socket = io("http://localhost:3000");
+
+  socket.on("connection", (args) => {
+    console.log('hello')
+  });
+
+  socket.emit('hello', "Works")
+  
+  socket.on('updatedata', (arg) => {
+    console.log(arg)
+    setTest(arg)
+  })
 
   const [image, setImage] = useState(null);
 
@@ -124,7 +139,7 @@ const ProfileScreen = ({navigation}) => {
       <View style={styles.ContainerNavButton}>
         <NavButton></NavButton>
       </View>
-      <Text style={styles.heading}>Profile</Text>
+      <Text style={styles.heading}>Profile {test.data}</Text>
       <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <View style={styles.container}>
