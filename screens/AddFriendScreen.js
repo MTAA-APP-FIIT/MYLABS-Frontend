@@ -6,12 +6,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 const AddFriendScreen = ({navigation}) => {
     const [number, onChangeNumber] = useState(null);
     const addFriend = async () =>{
-        const response = await fetch('http://localhost:3000/users/' + number + '/friends', {
+        /* const response = await fetch('http://localhost:3000/users/' + number + '/friends', {
             method: 'POST',
             headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
             body: JSON.stringify({friend_id: GLOBAL.id, state: false})
-        })
-            
+        }) */
+        global.socket.emit('request', number, GLOBAL.id)
       }
     const [name, onChangeName] = useState("");
   return (

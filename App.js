@@ -26,6 +26,7 @@ import CreateTaskScreen from './screens/CreateTaskScreen';
 import TaskScreen from  './screens/TaskScreen';
 import EditTaskScreen from './screens/EditTaskScreen';
 import CreateProjectScreen from './screens/CreateProjectScreen';
+import * as SecureStore from 'expo-secure-store';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,6 +35,16 @@ const TabNavigator = () => {
   let [fontsLoaded] = useFonts({
     Overlock_700Bold,
   });
+
+  global.socket.on('request', (arg) => {
+    deletevalue("Name")
+    save("Name", "mame")
+  })
+
+  global.socket.on('request2', (arg) => {
+    deletevalue("Name")
+    save("Name", "mame2")
+  })
 
   return (
     <Tab.Navigator initialRouteName="Home" screenOptions={{
@@ -69,6 +80,23 @@ const TabNavigator = () => {
       }}/>
     </Tab.Navigator>
   )
+}
+
+async function save(key, value) {
+  await SecureStore.setItemAsync(key, value);
+}
+
+async function deletevalue(key) {
+  await SecureStore.deleteItemAsync(key);
+}
+
+async function getValueFor(key) {
+  let result = await SecureStore.getItemAsync(key);
+  if (result) {
+    return result
+  } else {
+    return false
+  }
 }
 
 

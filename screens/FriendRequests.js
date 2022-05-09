@@ -73,7 +73,10 @@ const FriendRequests = ({route, navigation}) => {
 
 
   useEffect(() => {
-    findProfiles();
+    global.socket.emit('loadRequests', global.id)
+    global.socket.on('loadRequests', (arg) => {
+      setRequests(arg)
+    })
   }, []);
 
 

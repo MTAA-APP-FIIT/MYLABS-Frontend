@@ -11,7 +11,12 @@ const LoginScreen = ({navigation}) => {
 
   async function save(id) {
     GLOBAL.id = id
-    console.log('User ID: ' + GLOBAL.id)
+    global.socket = io("http://192.168.68.106:3000");
+    // console.log(socket)
+
+    global.socket.on("connection", (args) => {
+      console.log('hello')
+    });
   }
 
   const [count, setCount] = useState(0);
@@ -43,7 +48,7 @@ const LoginScreen = ({navigation}) => {
       email: email,
       password: password
   };
-    fetch('http://localhost:3000/login/', {
+    fetch('http://192.168.68.106:3000/login/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

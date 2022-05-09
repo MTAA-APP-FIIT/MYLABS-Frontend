@@ -4,12 +4,12 @@ import NavButton from '../components/NavButton'
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native';
-
+import * as SecureStore from 'expo-secure-store';
 
 
 
 const FriendsScreen = () => {
-
+  const [numberRequests, setnumberRequests] = useState('')
   const navigation = useNavigation();
   const [friends, setFriends] = useState([]);
   const [friendsLength, setFriendsLength] = useState([]);
@@ -22,7 +22,20 @@ const FriendsScreen = () => {
 
   const [state, setState] = useState({ 
     refresh: false
-})
+  })
+
+  async function save(key, value) {
+    await SecureStore.setItemAsync(key, value);
+  }
+
+  async function getValueFor(key) {
+    let result = await SecureStore.getItemAsync(key);
+    if (result) {
+      alert("🔐 Here's your value 🔐 \n" + result);
+    } else {
+      alert('No values stored under that key.');
+    }
+  }
 
   const renderItem = ({item}) => (
     <Item name={item.name} position={item.position} id={item.id}/>
@@ -143,7 +156,24 @@ const FriendsScreen = () => {
     setChange(true)
     setProfiles(array)
   }, [change]);
+  useEffect(async () => {
+    global.socket.emit('loadFriends', global.id)
+    global.socket.on('loadFriends', (arg) => {
+      setProfiles(arg)
+      setLoading(false)
+    })
+    const value = await SecureStore.getItemAsync("Name")
+    setnumberRequests(value)
+  }, []);
 
+  async function getValueFor(key) {
+    let result = await SecureStore.getItemAsync(key);
+    if (result) {
+      return result
+    } else {
+      return false
+    }
+  }
 
   return (
     <View style={{backgroundColor: '#F7F9FC', flex: 1}}>
@@ -169,7 +199,7 @@ const FriendsScreen = () => {
           
           <View style={styles.credentialsContainer}>
             <Text style={styles.name}>Friend requests</Text>
-            <Text style={styles.position}>New requests: {requests}</Text>
+            <Text style={styles.position}>New requests: {numberRequests}</Text>
           </View>
           <View style={styles.chevron}>
             <Entypo name="chevron-right" size={32} color="grey" />
