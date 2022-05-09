@@ -7,14 +7,8 @@ const { io } = require("socket.io-client");
 
 const LoginScreen = ({navigation}) => {
 
-  const socket = io("http://localhost:3000");
-
-  socket.on("connection", (args) => {
-    console.log('hello')
-  });
-
-  // socket.emit('/projects/owner/:owner', 2)
-  // socket.on('RES/projects/owner/:owner', (arg) => {
+  // global.socket.emit('/projects/owner/:owner', 2)
+  // global.socket.on('RES/projects/owner/:owner', (arg) => {
   //     console.log(arg)
   // })
   
@@ -33,16 +27,22 @@ const LoginScreen = ({navigation}) => {
   //     console.log(arg)
   // })
 
-  socket.emit('/tasks/:taskId', 5)
-  socket.on('RES/tasks/:taskId', (arg) => {
-      console.log(arg)
-  })
+  // socket.emit('/tasks/:taskId', 5)
+  // socket.on('RES/tasks/:taskId', (arg) => {
+  //     console.log(arg)
+  // })
 
 
   GLOBAL.USERNAME = false
 
   async function save(id) {
     GLOBAL.id = id
+    global.socket = io("http://localhost:3000");
+    // console.log(socket)
+
+    global.socket.on("connection", (args) => {
+      console.log('hello')
+    });
   }
 
   const [count, setCount] = useState(0);
@@ -74,7 +74,7 @@ const LoginScreen = ({navigation}) => {
       email: email,
       password: password
   };
-    fetch('http://192.168.68.106:3000/login/', {
+    fetch('http://localhost:3000/login/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
