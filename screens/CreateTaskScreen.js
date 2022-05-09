@@ -5,7 +5,7 @@ import { Entypo } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 GLOBAL = require('../Global');
 
-const EditProfileScreen = ({navigation}) => {
+const CreateTaskScreen = ({navigation}) => {
 
     const [projectId, onChangeProjectId] = useState("");
     const [name, onChangeName] = useState("");
@@ -91,7 +91,7 @@ const EditProfileScreen = ({navigation}) => {
   )
 }
 
-export default EditProfileScreen
+export default CreateTaskScreen
 
 const styles = StyleSheet.create({
     heading: {

@@ -4,24 +4,38 @@ import NavButton from '../components/NavButton'
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native';
-
+import * as SecureStore from 'expo-secure-store';
 
 
 
 const FriendsScreen = () => {
-
+  const [numberRequests, setnumberRequests] = useState('')
   const navigation = useNavigation();
   const [friends, setFriends] = useState([]);
   const [friendsLength, setFriendsLength] = useState([]);
   const [requests, setRequests] = useState([]);
   const [requestProfiles, setRequestProfiles] = useState([]);
   const [profiles, setProfiles] = useState([]);
+  const [change, setChange] = useState(false)
 
   const [isLoading, setLoading] = useState(true);
 
   const [state, setState] = useState({ 
     refresh: false
-})
+  })
+
+  async function save(key, value) {
+    await SecureStore.setItemAsync(key, value);
+  }
+
+  async function getValueFor(key) {
+    let result = await SecureStore.getItemAsync(key);
+    if (result) {
+      alert("🔐 Here's your value 🔐 \n" + result);
+    } else {
+      alert('No values stored under that key.');
+    }
+  }
 
   const renderItem = ({item}) => (
     <Item name={item.name} position={item.position} id={item.id}/>
@@ -107,10 +121,59 @@ const FriendsScreen = () => {
     setLoading(false)
   }
   
-  useEffect(() => {
-    friendsInfo()
+  useEffect( async () => {
+    try{
+      const response = await fetch('http://localhost:3000/users/' + GLOBAL.id + '/friends', {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+      const jsonRes = await response.json();
+
+      const filteredFriends = jsonRes.filter(x => x.state === true);
+      const filteredRequests = jsonRes.filter(x => x.state === false);
+
+      if (filteredFriends.length > 0){
+        setFriendsLength(filteredFriends.length)
+        setFriends(filteredFriends)
+      }
+      else {
+        setFriendsLength(0)
+      }
+      if (filteredRequests.length > 0){
+        setRequests(filteredRequests.length)
+        setRequestProfiles(filteredRequests)
+      }else {
+        setRequests(0)
+      }
+
+    } catch{
+      console.error("Problem")
+    }
+
+    const array = []
+    var obj = Object.values(friends);
+    for (let i = 0; i < friendsLength; i++) { 
+        const response2 = await fetch('http://localhost:3000/users/' + obj[i].friend_id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+        array.push(await response2.json())
+    }
+    setChange(true)
+    setProfiles(array)
+  }, [change]);
+  useEffect(async () => {
+    global.socket.emit('loadFriends', global.id)
+    global.socket.on('loadFriends', (arg) => {
+      setProfiles(arg)
+      setLoading(false)
+    })
+    const value = await SecureStore.getItemAsync("Name")
+    setnumberRequests(value)
   }, []);
 
+  async function getValueFor(key) {
+    let result = await SecureStore.getItemAsync(key);
+    if (result) {
+      return result
+    } else {
+      return false
+    }
+  }
 
   return (
     <View style={{backgroundColor: '#F7F9FC', flex: 1}}>
@@ -136,7 +199,7 @@ const FriendsScreen = () => {
           
           <View style={styles.credentialsContainer}>
             <Text style={styles.name}>Friend requests</Text>
-            <Text style={styles.position}>New requests: {requests}</Text>
+            <Text style={styles.position}>New requests: {numberRequests}</Text>
           </View>
           <View style={styles.chevron}>
             <Entypo name="chevron-right" size={32} color="grey" />
@@ -145,13 +208,13 @@ const FriendsScreen = () => {
       </TouchableOpacity>
       
 
-      { isLoading==false ? <FlatList
+       <FlatList
         extraData={profiles}
         data={profiles}
         renderItem={renderItem}
         keyExtractor={profiles.id}
         style={styles.listContainer}
-      /> : <Text style={styles.EmptySate}> No Friends </Text> }
+      />
       
       
     </View>

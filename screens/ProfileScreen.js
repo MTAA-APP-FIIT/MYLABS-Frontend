@@ -6,14 +6,24 @@ GLOBAL = require('../Global');
 import * as ImagePicker from 'expo-image-picker';
 import DefaultImage from '../assets/images/Avatar.png';
 const { io } = require("socket.io-client");
+import * as SecureStore from 'expo-secure-store';
 
 const DEFAULT_IMAGE = Image.resolveAssetSource(DefaultImage).uri;
 
 const ProfileScreen = ({navigation}) => {
 
   const [test, setTest] = useState("");
-  const socket = io("http://localhost:3000");
 
+  //const socket = io("http://localhost:3000");
+
+
+  /* global.socket.on('updatedata', (arg) => {
+    console.log(arg)
+    setTest(arg)
+  })
+
+  global.socket.emit('hello', "works") */
+/* 
   socket.on("connection", (args) => {
     console.log('hello')
   });
@@ -24,6 +34,7 @@ const ProfileScreen = ({navigation}) => {
     console.log(arg)
     setTest(arg)
   })
+  }) */
 
   const [image, setImage] = useState(null);
 
@@ -108,12 +119,18 @@ const ProfileScreen = ({navigation}) => {
   }
   
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      profileInfo();
-      friendsInfo();
-      projectsInfo();
+    //const unsubscribe = navigation.addListener('focus', () => {
+      //profileInfo();
+      //friendsInfo();
+      //projectsInfo();
+    //})
+
+    global.socket.emit('loadProfile', 2)
+    global.socket.emit('request2')
+    global.socket.on('loadProfile', (arg) => {
+      setTest(arg)
     })
-  }, []);
+  }, [navigation]);
   
   let [selectedImage, setSelectedImage] = useState("");
 
@@ -128,7 +145,7 @@ const ProfileScreen = ({navigation}) => {
       }).then(fetch('http://localhost:3000/users/' + GLOBAL.id, {
         method: 'PATCH',
         headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
-        body: JSON.stringify({profile_picture: premenna.uri})}));
+        body: JSON.stringify({profile_picture: premenna.name})}));
     } catch (error) {
       console.log(error);
     }
@@ -151,8 +168,8 @@ const ProfileScreen = ({navigation}) => {
           
         </View>
         <View style={styles.credentialsContainer}>
-          <Text style={styles.name}>{result.name}</Text>
-          <Text style={styles.position}>{result.position}</Text>
+          <Text style={styles.name}>{test.name}</Text>
+          <Text style={styles.position}>{test.position}</Text>
           <View style={styles.friendContainer}>
             <Text style={styles.stats}>Friends: {friends} </Text>
             <Text style={styles.stats}>Projects: {projects}</Text>
@@ -161,17 +178,17 @@ const ProfileScreen = ({navigation}) => {
       </View>
       <View style={styles.containerInfo}>
           <Text style={styles.category}> E-Mail: </Text> 
-          <Text style={styles.categoryValue}>{result.email}</Text>
+          <Text style={styles.categoryValue}>{test.email}</Text>
           <Text style={styles.category}> Phone: </Text> 
-          <Text style={styles.categoryValue}> {result.phone} </Text>
+          <Text style={styles.categoryValue}> {test.phone} </Text>
           <Text style={styles.category}> Birthday: </Text> 
-          <Text style={styles.categoryValue}> {result.birthdate} </Text>
+          <Text style={styles.categoryValue}> {test.birthdate} </Text>
           <Text style={styles.category}> Username: </Text> 
-          <Text style={styles.categoryValue}> {result.username} </Text>
+          <Text style={styles.categoryValue}> {test.username} </Text>
           <Text style={styles.category}> Position: </Text> 
-          <Text style={styles.categoryValue}> {result.position} </Text>
+          <Text style={styles.categoryValue}> {test.position} </Text>
           <Text style={styles.category}> Joined: </Text> 
-          <Text style={styles.categoryValue}> {result.created_at} </Text>
+          <Text style={styles.categoryValue}> {test.created_at} </Text>
           <TouchableOpacity style={styles.btnSecondary} onPress={() => navigation.navigate('EditProfile')}>
             <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>
               <Text style={styles.btnSecondaryText}>Edit</Text>

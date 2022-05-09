@@ -6,13 +6,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 GLOBAL = require('../Global');
 
-const CreateProjectScreen = (props) => {
+
+const CreateProjectScreen = ({navigation}) => {
+
     const [name, onChangeName] = useState("");
     const [description, onChangeDescription] = useState("");
     const [deadline, onChangeEnd] = useState("");
     
 
   /*const onSubmit = async () =>{
+  const onSubmit = async () =>{
     try {
       console.log(name, description, GLOBAL.id)
       const response = await fetch('http://localhost:3000/projects/', {
@@ -30,13 +33,15 @@ const CreateProjectScreen = (props) => {
       console.log(err)
     }
   }*/
+        
+  
 
     return (
     <View style={{backgroundColor: '#F7F9FC', flex: 1}}>
         <View style={styles.container}>
             <Text style={styles.heading}>Create Project</Text>
             <TouchableOpacity style={styles.chevron}>
-                <Entypo name='chevron-left' size={32} color="black" onPress={() => props.change()}></Entypo>
+                <Entypo name='chevron-left' size={32} color="black" onPress={() => navigation.goBack()}></Entypo>
             </TouchableOpacity>
             
             <SafeAreaView style={styles.formContainer}>
@@ -56,7 +61,8 @@ const CreateProjectScreen = (props) => {
                     onChangeText={onChangeEnd}
                 />
                 <TouchableOpacity style={styles.btnSecondary} onPress={() => {
-                    props.onSubmit(name, description, deadline);
+                    onSubmit()
+                    navigation.navigate('WorkspaceSchedule')
                 }}>
                     <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>
                         <Text style={styles.btnSecondaryText}>Create</Text>
@@ -66,7 +72,7 @@ const CreateProjectScreen = (props) => {
         </View>
     </View>
   )
-}
+              }
 
 export default CreateProjectScreen
 

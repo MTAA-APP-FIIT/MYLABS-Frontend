@@ -24,6 +24,9 @@ import AddFriendScreen from './screens/AddFriendScreen';
 import RegisterScreen2 from './screens/RegisterScreen2';
 import CreateTaskScreen from './screens/CreateTaskScreen';
 import TaskScreen from  './screens/TaskScreen';
+import EditTaskScreen from './screens/EditTaskScreen';
+import CreateProjectScreen from './screens/CreateProjectScreen';
+import * as SecureStore from 'expo-secure-store';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -32,6 +35,16 @@ const TabNavigator = () => {
   let [fontsLoaded] = useFonts({
     Overlock_700Bold,
   });
+
+  global.socket.on('request', (arg) => {
+    deletevalue("Name")
+    save("Name", "mame")
+  })
+
+  global.socket.on('request2', (arg) => {
+    deletevalue("Name")
+    save("Name", "mame2")
+  })
 
   return (
     <Tab.Navigator initialRouteName="Home" screenOptions={{
@@ -69,6 +82,23 @@ const TabNavigator = () => {
   )
 }
 
+async function save(key, value) {
+  await SecureStore.setItemAsync(key, value);
+}
+
+async function deletevalue(key) {
+  await SecureStore.deleteItemAsync(key);
+}
+
+async function getValueFor(key) {
+  let result = await SecureStore.getItemAsync(key);
+  if (result) {
+    return result
+  } else {
+    return false
+  }
+}
+
 
 export default function App() {
   return (
@@ -88,7 +118,9 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false}} name="WorkspaceTasks" component={WorkspaceScreenTasks} />
         <Stack.Screen options={{ headerShown: false}} name="WorkspaceSchedule" component={WorkspaceScreenSchedule} />
         <Stack.Screen options={{ headerShown: false}} name="CreateTask" component={CreateTaskScreen} />
+        <Stack.Screen options={{ headerShown: false}} name="CreateProject" component={CreateProjectScreen} />
         <Stack.Screen options={{ headerShown: false}} name="Task" component={TaskScreen} />
+        <Stack.Screen options={{ headerShown: false}} name="EditTask" component={EditTaskScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
