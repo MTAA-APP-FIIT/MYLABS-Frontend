@@ -9,7 +9,6 @@ const TaskScreen = ({route, navigation}) => {
 
   const taskId = route.params.taskId
   const [result, setResult] = useState([]);
-  const [friends, setFriends] = useState([]);
 
   const taskInfo = async () => {
     try{
@@ -21,6 +20,15 @@ const TaskScreen = ({route, navigation}) => {
       console.error(error)
     }
     
+  }
+
+  const deleteTask = async () =>{
+    const response = await fetch('http://localhost:3000/tasks/' + taskId , {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
+
+    })
+        
   }
 
   useEffect(() => {
@@ -48,14 +56,14 @@ const TaskScreen = ({route, navigation}) => {
                 <Text style={styles.category}> Notes: </Text> 
                 <Text style={styles.categoryValue}> {result.notes} </Text>
             </View>
-            <TouchableOpacity style={styles.btnSecondary} onPress={() => navigation.navigate('TabNavigator')}>
+            <TouchableOpacity style={styles.btnSecondary} onPress={() => navigation.navigate('EditTask', {taskId: taskId})}>
                 <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>
                     <Text style={styles.btnSecondaryText}>Edit</Text>
                 </LinearGradient>
             </TouchableOpacity>
             <Pressable onPress={() => {
-                    deleteFriend()
-                    navigation.navigate('Friends')
+                    deleteTask()
+                    navigation.navigate('Workspace')
                 }}>
               <Text style={styles.delete} >Delete task</Text>
             </Pressable>

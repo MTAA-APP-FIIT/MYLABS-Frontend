@@ -60,7 +60,7 @@ const WorkspaceScreen = ({navigation}) => {
 
     
     <Pressable style={styles.plus} >
-      <Entypo name="plus" size={32} color="grey" />
+      <Entypo name="plus" size={32} color="grey" onPress={() => navigation.navigate('CreateTask')} />
     </Pressable>
 
       <View style={styles.workspaceButtons}>
@@ -91,7 +91,7 @@ const WorkspaceScreen = ({navigation}) => {
                 renderItem={renderItem}
                 keyExtractor={tasks.id}
             />
-        </View>
+      </View>
 
     
   </View>

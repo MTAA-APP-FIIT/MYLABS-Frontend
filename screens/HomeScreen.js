@@ -13,6 +13,7 @@ const HomeScreen = () => {
   const [projects, setProjects] = useState([]);
   const [projectsLength, setProjectsLength] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState([]);
+  const [jsonRes, setJsonRes] = useState([]);
 
   const renderItem = ({ item }) => (
     <Item name={item.name} description={item.description} date={item.date} id={item.id}/>
@@ -40,17 +41,19 @@ const HomeScreen = () => {
 
    const projectsInfo = async () => {
     try{
-      const response = await fetch(`http://localhost:3000/projects/owner/${GLOBAL.id}`, {
-        headers: {
-          'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'
-        },
-      })
-      const jsonRes = await response.json();
+      // const response = await fetch(`http://localhost:3000/projects/owner/${GLOBAL.id}`, {
+      //   headers: {
+      //     'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'
+      //   },
+      // })
       // console.log(jsonRes)
 
-      setProjectsLength(jsonRes.length)
-      setProjects(jsonRes)
-      // console.log(projectsLength)
+      global.socket.emit('/projects/owner/:owner', GLOBAL.id)
+      global.socket.on('RES/projects/owner/:owner', (arg) => {
+        setJsonRes(arg.projects)
+        setProjectsLength(jsonRes.length)
+        setProjects(jsonRes)
+      })
 
       const array = []
       var obj = Object.values(projects);

@@ -70,4 +70,67 @@ const CreateProjectScreen = (props) => {
 
 export default CreateProjectScreen
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    heading: {
+        top: 80,
+        left: 25,
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: 'black'
+      },
+    formContainer: {
+        top: 80
+    },
+    btnSecondary: {
+        alignSelf: 'center',
+        width: '80%',
+        borderRadius: 20,
+        marginVertical: 5,
+        marginTop:30,
+        borderWidth: 1,
+        borderColor: 'white',
+      },
+      btnSecondaryText: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        paddingVertical: 12,
+        borderRadius: 20,
+        color: 'white',
+        textAlign: 'center',
+      },
+      Gradient: {
+        borderRadius: 20,   
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2
+      },
+    label: {
+        fontSize: 15,
+        left: 10,
+        fontWeight: 'bold',
+        color: '#999'
+    },
+    chevron: {
+        left: 25
+      },
+    container: {
+        top: 60,
+    },
+    input: {
+        height: 40,
+        margin: 12,
+        backgroundColor: 'white',
+        borderRadius: 25,
+        padding: 15,
+        shadowColor: "#000",
+shadowOffset: {
+	width: 0,
+	height: 2,
+},
+shadowOpacity: 0.25,
+shadowRadius: 3.84,
+
+elevation: 5,
+      },
+})
