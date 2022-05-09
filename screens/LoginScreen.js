@@ -13,17 +13,31 @@ const LoginScreen = ({navigation}) => {
     console.log('hello')
   });
 
-  socket.emit('hello', "Works")
+  // socket.emit('/projects/owner/:owner', 2)
+  // socket.on('RES/projects/owner/:owner', (arg) => {
+  //     console.log(arg)
+  // })
   
-  socket.on('updatedata', (arg) => {
-    console.log(arg)
+  // socket.emit('/projects/:projectId', 2)
+  // socket.on('RES/projects/:projectId', (arg) => {
+  //     console.log(arg)
+  // })
+
+  // socket.emit('/tasks/owner/:owner', 2)
+  // socket.on('RES/tasks/owner/:owner', (arg) => {
+  //     console.log(arg)
+  // })
+
+  // socket.emit('/tasks/project/:projectId', 19)
+  // socket.on('RES/tasks/project/:projectId', (arg) => {
+  //     console.log(arg)
+  // })
+
+  socket.emit('/tasks/:taskId', 5)
+  socket.on('RES/tasks/:taskId', (arg) => {
+      console.log(arg)
   })
 
-  /* const hello = () => {
-    socket.emit('hello', "Works")
-  }
-
-  hello() */
 
   GLOBAL.USERNAME = false
 
