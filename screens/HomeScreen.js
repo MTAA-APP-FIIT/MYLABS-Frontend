@@ -13,7 +13,7 @@ const HomeScreen = () => {
   const [projects, setProjects] = useState([]);
   const [projectsLength, setProjectsLength] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState([]);
-  const [jsonRes, setJsonRes] = useState([]);
+  // const [jsonRes, setJsonRes] = useState([]);
 
   const renderItem = ({ item }) => (
     <Item name={item.name} description={item.description} date={item.date} id={item.id}/>
@@ -39,21 +39,33 @@ const HomeScreen = () => {
     
   );
 
-   const projectsInfo = async () => {
+  const socketEmits = async () => {
+    global.socket.emit('/projects/owner/:owner', GLOBAL.id, (response) =>{
+      console.log(response)
+      setJsonRes(response.projects)
+    })
+  }
+  
+  const projectsInfo = async () => {
     try{
-      // const response = await fetch(`http://localhost:3000/projects/owner/${GLOBAL.id}`, {
-      //   headers: {
-      //     'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'
-      //   },
-      // })
-      // console.log(jsonRes)
-
-      global.socket.emit('/projects/owner/:owner', GLOBAL.id)
-      global.socket.on('RES/projects/owner/:owner', (arg) => {
-        setJsonRes(arg.projects)
-        setProjectsLength(jsonRes.length)
-        setProjects(jsonRes)
+      const response = await fetch(`http://localhost:3000/projects/owner/${GLOBAL.id}`, {
+        headers: {
+          'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'
+        },
       })
+      // console.log(jsonRes)
+     
+      // global.socket.on('RES/projects/owner/:owner', (arg) => {
+      //   setJsonRes(arg.projects)
+      // })
+      // setJsonRes(response)
+      const jsonRes = await response.json();
+      
+      console.log('len ' +jsonRes.length)
+
+      
+      setProjectsLength(jsonRes.length)
+      setProjects(jsonRes)
 
       const array = []
       var obj = Object.values(projects);
@@ -73,6 +85,7 @@ const HomeScreen = () => {
 
 
   useEffect(() => {
+    // socketEmits();
     projectsInfo();
   }, []);
 

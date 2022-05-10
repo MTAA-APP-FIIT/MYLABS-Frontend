@@ -106,7 +106,7 @@ const WorkspaceScreen = () => {
     <Text style={styles.heading}>Workspace</Text>
 
     <Pressable style={styles.plus} >
-      <Entypo name="plus" size={32} color="grey" onPress={() => navigation.navigate('CreateProject')} />
+      <Entypo name="plus" size={32} color="grey" onPress={() => setChange(true)} />
     </Pressable>
 
       <View style={styles.workspaceButtons}>

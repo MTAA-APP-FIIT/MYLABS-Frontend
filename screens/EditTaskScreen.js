@@ -16,6 +16,62 @@ const EditTaskScreen = ({route, navigation}) => {
     const [end, onChangeEnd] = useState("");
     const [notes, onChangeNotes] = useState("");
     const [projectId, onChangeProjectId] = useState("");
+
+    const [isError, setIsError] = useState(false);
+    const [message, setMessage] = useState('');
+
+    const getMessage = () => {
+      const status = isError ? `Error: ` : `Success: `;
+      return status + message;
+    }
+
+    function isNumeric(val) {
+      return /^-?\d+$/.test(val);
+    }
+
+    function isCorrectFormat(val) {
+      if (
+        (isNumeric(val[0]) &&
+        isNumeric(val[1]) &&
+        isNumeric(val[2]) &&
+        isNumeric(val[3]) &&
+        val[4]=="-" &&
+        isNumeric(val[5]) &&
+        isNumeric(val[6]) &&
+        val[7]=="-" &&
+        isNumeric(val[8]) &&
+        isNumeric(val[9]))
+      ){
+        return true
+      }
+      return false;
+    }
+
+    function validator(){
+      if (
+        projectId.length < 1 ||
+        name.length < 1 || 
+        description.length < 1 || 
+        start.length < 1 ||
+        end.length < 1 ||
+        notes.length < 1
+        ){
+        setIsError(true);
+        setMessage("Fill all fields");
+        return false
+      }
+      if (!isCorrectFormat(start)){
+        setIsError(true);
+        setMessage("Wrong start format. Correct is: yyyy-mm-dd");
+        return false
+      }
+      if (!isCorrectFormat(end)){
+        setIsError(true);
+        setMessage("Wrong end format. Correct is: yyyy-mm-dd");
+        return false
+      }
+      return true
+    }
     
 
   const taskInfo = async () => {
@@ -98,9 +154,12 @@ const EditTaskScreen = ({route, navigation}) => {
                     onChangeText={onChangeNotes}
                     value={notes}
                 />
+                <Text style={[styles.message, {color: isError ? 'red' : 'green'}]}>{message ? getMessage() : null}</Text>
                 <TouchableOpacity style={styles.btnSecondary} onPress={() => {
+                  if(validator()){
                     onSubmit()
-                    navigation.navigate('Workspace')
+                    navigation.navigate('WorkspaceSchedule')
+                  }
                 }}>
                     <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>
                         <Text style={styles.btnSecondaryText}>Save</Text>
@@ -124,6 +183,9 @@ const styles = StyleSheet.create({
       },
     formContainer: {
         top: 80
+    },
+    message: {
+      alignSelf: 'center',
     },
     btnSecondary: {
         alignSelf: 'center',

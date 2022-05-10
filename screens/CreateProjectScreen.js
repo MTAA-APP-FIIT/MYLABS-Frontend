@@ -7,11 +7,14 @@ import { useNavigation } from '@react-navigation/native';
 GLOBAL = require('../Global');
 
 
-const CreateProjectScreen = ({navigation}) => {
+const CreateProjectScreen = (props) => {
+  const [name, onChangeName] = useState("");
+  const [description, onChangeDescription] = useState("");
+  const [deadline, onChangeEnd] = useState("");
+  
 
-    const [name, onChangeName] = useState("");
-    const [description, onChangeDescription] = useState("");
-    const [deadline, onChangeEnd] = useState("");
+    const [isError, setIsError] = useState(false);
+    const [message, setMessage] = useState('');
     
 
   /*const onSubmit = async () =>{
@@ -33,15 +36,48 @@ const CreateProjectScreen = ({navigation}) => {
       console.log(err)
     }
   }*/
-        
-  
 
+    const getMessage = () => {
+      const status = isError ? `Error: ` : `Success: `;
+      return status + message;
+    }
+
+    function isNumeric(val) {
+      return /^-?\d+$/.test(val);
+    }
+
+    function validator(){
+      if (name.length < 1 || description.length < 1 || deadline.length < 1){
+        setIsError(true);
+        setMessage("Fill all fields");
+        return false
+      }
+      if (
+        !(isNumeric(deadline[0]) &&
+        isNumeric(deadline[1]) &&
+        isNumeric(deadline[2]) &&
+        isNumeric(deadline[3]) &&
+        deadline[4]=="-" &&
+        isNumeric(deadline[5]) &&
+        isNumeric(deadline[6]) &&
+        deadline[7]=="-" &&
+        isNumeric(deadline[8]) &&
+        isNumeric(deadline[9]))
+        
+      ){
+        setIsError(true);
+        setMessage("Wrong date format. Correct is: yyyy-mm-dd");
+        return false
+      }
+      return true
+    }
+        
     return (
     <View style={{backgroundColor: '#F7F9FC', flex: 1}}>
         <View style={styles.container}>
             <Text style={styles.heading}>Create Project</Text>
             <TouchableOpacity style={styles.chevron}>
-                <Entypo name='chevron-left' size={32} color="black" onPress={() => navigation.goBack()}></Entypo>
+              <Entypo name='chevron-left' size={32} color="black" onPress={() => props.change()}></Entypo>
             </TouchableOpacity>
             
             <SafeAreaView style={styles.formContainer}>
@@ -49,20 +85,28 @@ const CreateProjectScreen = ({navigation}) => {
                 <TextInput
                     style={styles.input}
                     onChangeText={onChangeName}
+                    placeholder="Name..." 
+                    placeholderTextColor="grey"
                 />
                 <Text style={styles.label}> Description </Text>
                 <TextInput
                     style={styles.input}
                     onChangeText={onChangeDescription}
+                    placeholder="Description..." 
+                    placeholderTextColor="grey"
                 />
                 <Text style={styles.label}> Deadline </Text>
                 <TextInput
                     style={styles.input}
                     onChangeText={onChangeEnd}
+                    placeholder="yyyy-mm-dd" 
+                    placeholderTextColor="grey"
                 />
+                <Text style={[styles.message, {color: isError ? 'red' : 'green'}]}>{message ? getMessage() : null}</Text>
                 <TouchableOpacity style={styles.btnSecondary} onPress={() => {
-                    onSubmit()
-                    navigation.navigate('WorkspaceSchedule')
+                  if(validator()){
+                    props.onSubmit(name, description, deadline);
+                  }
                 }}>
                     <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>
                         <Text style={styles.btnSecondaryText}>Create</Text>
@@ -86,6 +130,9 @@ const styles = StyleSheet.create({
       },
     formContainer: {
         top: 80
+    },
+    message: {
+      alignSelf: 'center',
     },
     btnSecondary: {
         alignSelf: 'center',
