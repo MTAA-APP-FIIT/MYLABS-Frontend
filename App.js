@@ -36,16 +36,7 @@ const TabNavigator = () => {
     Overlock_700Bold,
   });
 
-  global.socket.on('request', (arg) => {
-    deletevalue("Name")
-    save("Name", "mame")
-  })
-
-  global.socket.on('request2', (arg) => {
-    deletevalue("Name")
-    save("Name", "mame2")
-  })
-
+  
   return (
     <Tab.Navigator initialRouteName="Home" screenOptions={{
       "tabBarShowLabel": false,
@@ -101,6 +92,7 @@ async function getValueFor(key) {
 
 
 export default function App() {
+  myProp = "hello"
   return (
     
     <NavigationContainer>

@@ -120,7 +120,7 @@ const FriendsScreen = () => {
     })
     setLoading(false)
   }
-  
+  /* 
   useEffect( async () => {
     try{
       const response = await fetch('http://localhost:3000/users/' + GLOBAL.id + '/friends', {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
@@ -156,15 +156,47 @@ const FriendsScreen = () => {
     setChange(true)
     setProfiles(array)
   }, [change]);
+ */
+
+  global.socket.on('profileChange', (arg) => {
+      const forChange = profiles.findIndex(item => item.email === arg.email)
+      const temp = profiles
+      temp.splice(forChange, 1, arg)
+      setProfiles([...temp])
+    
+  })
+
+  global.socket.on('receivedRequest', (arg) => {
+    if (arg.id == GLOBAL.id){
+      var newcount = numberRequests
+      newcount = newcount + 1
+      setnumberRequests(newcount)
+    }
+})
+
+  global.socket.on('acceptFriend', (arg) => {
+    setProfiles([...profiles,arg])
+  })
+
+  global.socket.on('deleteFriend', (arg) => {
+    const forChange = profiles.findIndex(item => item.email === arg.email)
+      const temp = profiles
+      temp.splice(forChange, 1)
+      setProfiles(temp)
+  })
+
   useEffect(async () => {
-    global.socket.emit('loadFriends', global.id)
-    global.socket.on('loadFriends', (arg) => {
-      setProfiles(arg)
-      setLoading(false)
+    const unsubscribe = navigation.addListener('focus', () => {
+      global.socket.emit('loadFriends', GLOBAL.id)
+      global.socket.emit('loadRequests', GLOBAL.id)
+      global.socket.on('loadFriends', (arg) => {
+        setProfiles(arg)
+      })
+      global.socket.on('loadRequests2', (arg) => {
+        setnumberRequests(arg)
+      })
     })
-    const value = await SecureStore.getItemAsync("Name")
-    setnumberRequests(value)
-  }, []);
+  }, [navigation]);
 
   async function getValueFor(key) {
     let result = await SecureStore.getItemAsync(key);

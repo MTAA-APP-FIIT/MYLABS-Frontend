@@ -117,18 +117,39 @@ const ProfileScreen = ({navigation}) => {
       console.error("Problem")
     }
   }
-  
+
+  global.socket.on('request', (arg) => {
+    //deletevalue("Name")
+    //save("Name", "mame")
+    GLOBAL.friendRequests = arg
+    console.log(GLOBAL.friendRequests)
+  })
+
+  global.socket.on('acceptInvite', (arg) => {
+    var newcount = friends
+    newcount = newcount + 1
+    setFriends(newcount)
+  })
+
   useEffect(() => {
     //const unsubscribe = navigation.addListener('focus', () => {
       //profileInfo();
       //friendsInfo();
       //projectsInfo();
     //})
-
-    global.socket.emit('loadProfile', 2)
-    global.socket.emit('request2')
-    global.socket.on('loadProfile', (arg) => {
-      setTest(arg)
+    const unsubscribe = navigation.addListener('focus', () => {
+      global.socket.emit('loadProfile', GLOBAL.id)
+      global.socket.emit('loadFriends', GLOBAL.id)
+      global.socket.emit('loadProjects', GLOBAL.id)
+      global.socket.on('loadProfile', (arg) => {
+        setTest(arg)
+      })
+      global.socket.on('loadFriends', (arg) => {
+        setFriends(arg.length)
+      })
+      global.socket.on('loadProjects', (arg) => {
+        setProjects(arg.length)
+      })
     })
   }, [navigation]);
   

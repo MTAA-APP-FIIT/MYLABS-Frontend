@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from 'react-native'
 import {React, useState, useEffect} from 'react'
 import NavButton from '../components/NavButton'
 import { LinearGradient } from 'expo-linear-gradient';
@@ -32,18 +32,40 @@ const FriendScreen = ({route, navigation}) => {
     }
   }
 
-  const deleteFriend = async () =>{
-    const response = await fetch('http://localhost:3000/users/' + GLOBAL.id + '/friends', {
+  const deleteFriend = (user_id) =>{
+    
+    global.socket.emit('deleteFriend', GLOBAL.id, user_id)
+    confirm()
+    /* const response = await fetch('http://localhost:3000/users/' + GLOBAL.id + '/friends', {
         method: 'DELETE',
         headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
         body: JSON.stringify({friend_id: userId})
-    })
+    }) */
         
   }
 
+  global.socket.on('profileChange2', (arg) => {
+    if (result.id == arg.id){
+      setResult(arg)
+    }
+  })
+
+  const confirm = () => {
+    Alert.alert(
+      "Confirmation",
+      "Friend deleted",
+      [
+        { text: "OK" }
+      ])
+  }
+
   useEffect(() => {
-    profileInfo();
-    friendsInfo();
+    const unsubscribe = navigation.addListener('focus', () => {
+      global.socket.emit('loadFriend', userId)
+      global.socket.on('loadFriend', (arg) => {
+        setResult(arg)
+      })
+    })
   }, []);
 
   return (
@@ -81,8 +103,9 @@ const FriendScreen = ({route, navigation}) => {
                 </LinearGradient>
             </TouchableOpacity>
             <Pressable onPress={() => {
-                    deleteFriend()
-                    navigation.navigate('Friends')
+                    deleteFriend(result.id)
+                    //navigation.navigate('Friends')
+
                 }}>
               <Text style={styles.delete} >Delete friend</Text>
             </Pressable>
@@ -100,7 +123,7 @@ const styles = StyleSheet.create({
     left: 25
   },
     container: {
-        top: 180
+        top: 140
     },
     category: {
         width: '50%',

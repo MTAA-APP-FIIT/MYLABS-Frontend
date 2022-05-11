@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image, Alert } from 'react-native'
 import {React, useState,useEffect} from 'react'
 import NavButton from '../components/NavButton';
 import { Entypo } from '@expo/vector-icons';
@@ -25,21 +25,51 @@ const FriendRequests = ({route, navigation}) => {
   );
   
   const declineFriend = async (user_id) =>{
-    const response = await fetch('http://localhost:3000/users/' + GLOBAL.id + '/friends', {
+    const isLargeNumber = (element) => element.id === user_id
+    const index = requests.findIndex(isLargeNumber)
+    const temp = requests
+    temp.splice(index, 1)
+    setRequests([...temp])
+    global.socket.emit('declineFriend', GLOBAL.id, user_id)
+    /* const response = await fetch('http://localhost:3000/users/' + GLOBAL.id + '/friends', {
         method: 'DELETE',
         headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
         body: JSON.stringify({friend_id: user_id})
-    })
+    }) */
         
   }
 
   const confirmFriend = async (user_id) => {
-    const response = await fetch('http://localhost:3000/users/' + GLOBAL.id + '/friends', {
+    const isLargeNumber = (element) => element.id === user_id
+    const index = requests.findIndex(isLargeNumber)
+    const temp = requests
+    temp.splice(index, 1)
+    setRequests([...temp])
+    global.socket.emit('acceptFriend', GLOBAL.id, user_id)
+    /* const response = await fetch('http://localhost:3000/users/' + GLOBAL.id + '/friends', {
         method: 'PATCH',
         headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
         body: JSON.stringify({friend_id: user_id, state: 1})
-    })
+    }) */
         
+  }
+
+  const confirm = () => {
+    Alert.alert(
+      "Confirmation",
+      "Request approved",
+      [
+        { text: "OK" }
+      ])
+  }
+
+  const decline = () => {
+    Alert.alert(
+      "Confirmation",
+      "Request declined",
+      [
+        { text: "OK" }
+      ])
   }
 
 
@@ -57,11 +87,12 @@ const FriendRequests = ({route, navigation}) => {
         <View style={styles.credentialsContainer}>
           <Entypo name="check" size={32} color="grey" onPress={() => {
             confirmFriend(id)
-            navigation.navigate('Friends')
+            global.socket.emit('acceptInvite', GLOBAL.id, id)
+            confirm()
           }}/>
           <Entypo name="cross" size={32} color="grey" onPress={() => {
             declineFriend(id)
-            navigation.navigate('Friends')
+            decline()
           }}/>
         </View>
       </View>
@@ -70,14 +101,23 @@ const FriendRequests = ({route, navigation}) => {
     
   );
 
-
+  global.socket.on('request', (arg) => {
+    if (requests.length < 1){
+      setRequests([...requests,arg])
+    } else {
+      setRequests([...requests,arg])
+    }
+  })
 
   useEffect(() => {
-    global.socket.emit('loadRequests', global.id)
-    global.socket.on('loadRequests', (arg) => {
-      setRequests(arg)
+    const unsubscribe = navigation.addListener('focus', () => {
+      global.socket.emit('loadRequests', GLOBAL.id)
+      global.socket.on('loadRequests', (arg) => {
+        GLOBAL.friendRequests = arg
+        setRequests(GLOBAL.friendRequests)
+      })
     })
-  }, []);
+  }, [navigation]);
 
 
   return (
@@ -91,6 +131,7 @@ const FriendRequests = ({route, navigation}) => {
         <Text style={styles.heading}>Friend requests</Text>
         { requests.length ? <FlatList
         data={requests}
+        extraData={requests}
         renderItem={renderItem}
         keyExtractor={requests.id}
         style={styles.listContainer}

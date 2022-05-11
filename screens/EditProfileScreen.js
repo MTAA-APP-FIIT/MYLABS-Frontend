@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, SafeAreaView } from 'react-native'
+import { StyleSheet, Text, View, TextInput, SafeAreaView, Alert } from 'react-native'
 import {React, useState, useEffect} from 'react'
 import { TouchableOpacity } from 'react-native'
 import { Entypo } from '@expo/vector-icons';
@@ -14,11 +14,13 @@ const EditProfileScreen = ({navigation}) => {
     const [phone, onChangePhone] = useState("");
     const [position, onChangePosition] = useState("");
     const [number, onChangeNumber] = useState(null);
+    const [isError, setIsError] = useState(false);
+    const [message, setMessage] = useState('');
     
 
   const profileInfo = async () => {
     try{
-      const response = await fetch('http://localhost:3000/users/' + GLOBAL.id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+      const response = await fetch('http://192.168.68.106:3000/users/' + GLOBAL.id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
       const jsonRes = await response.json();
       setResult(jsonRes)
       onChangeName(jsonRes.name);
@@ -33,18 +35,43 @@ const EditProfileScreen = ({navigation}) => {
     
   }
 
+  const getMessage = () => {
+    const status = isError ? `Error: ` : `Success: `;
+    return status + message;
+}
 
   useEffect(() => {
-    profileInfo();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+     profileInfo();
+    })
+  }, [navigation]);
+
+  function validator(){
+    if (name.length < 1 || username.length < 1 || email.length < 1 || phone.length < 1 || position.length < 1){
+      setIsError(true);
+      setMessage("Please fill all fields");
+      return false
+    }
+    return true
+  }
 
   const onSubmit = async () =>{
-    const response = await fetch('http://localhost:3000/users/' + GLOBAL.id, {
+    const response = await fetch('http://192.168.68.106:3000/users/' + GLOBAL.id, {
         method: 'PATCH',
         headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
         body: JSON.stringify({name:name, username: username, email: email, phone:phone, position: position})
     })
-        
+    global.socket.emit('profileChange', GLOBAL.id)   
+  }
+  
+  const confirm = () => {
+    setMessage("");
+    Alert.alert(
+      "Confirmation",
+      "Your profile was succesfully updated",
+      [
+        { text: "OK" }
+      ])
   }
 
     return (
@@ -54,7 +81,6 @@ const EditProfileScreen = ({navigation}) => {
             <TouchableOpacity style={styles.chevron}>
                 <Entypo name='chevron-left' size={32} color="black" onPress={() => navigation.goBack()}></Entypo>
             </TouchableOpacity>
-            
             <SafeAreaView style={styles.formContainer}>
                 <Text style={styles.label}> Name </Text>
                 <TextInput
@@ -87,12 +113,16 @@ const EditProfileScreen = ({navigation}) => {
                     value={position}
                 />
                 <TouchableOpacity style={styles.btnSecondary} onPress={() => {
+                  if(validator()){
                     onSubmit()
-                    navigation.navigate('Profile')
+                    confirm()
+                  }
                 }}>
                     <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>
                         <Text style={styles.btnSecondaryText}>Save</Text>
                     </LinearGradient>
+                    <Text style={[styles.message, {color: isError ? 'red' : 'green'}]}>{message ? getMessage() : null}</Text>
+            
                 </TouchableOpacity>
                 </SafeAreaView>
         </View>
@@ -103,6 +133,10 @@ const EditProfileScreen = ({navigation}) => {
 export default EditProfileScreen
 
 const styles = StyleSheet.create({
+    message: {
+      top: 20,
+      alignSelf: 'center'
+    },
     heading: {
         top: 80,
         left: 25,
