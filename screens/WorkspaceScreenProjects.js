@@ -40,48 +40,50 @@ const WorkspaceScreen = () => {
     
   );
 
-  const projectsInfo = async () => {
-    try{
-      const response = await fetch(`http://localhost:3000/projects/owner/${GLOBAL.id}`, {
-        headers: {
-          'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'
-        },
-      })
-      const jsonRes = await response.json();
-      // console.log(jsonRes)
+  // const projectsInfo = async () => {
+  //   try{
+  //     const response = await fetch(`http://localhost:3000/projects/owner/${GLOBAL.id}`, {
+  //       headers: {
+  //         'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'
+  //       },
+  //     })
+  //     const jsonRes = await response.json();
+  //     // console.log(jsonRes)
 
-      setProjectsLength(jsonRes.length);
-      setProjects(jsonRes);
-      // console.log(projectsLength)
+  //     setProjectsLength(jsonRes.length);
+  //     setProjects(jsonRes);
+  //     // console.log(projectsLength)
 
-      const array = []
-      var obj = Object.values(projects);
-      for (let i = 0; i < projectsLength; i++) { 
-          const response2 = await fetch('http://localhost:3000/projects/' + obj[i].id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
-          array.push(await response2.json())
-      }
-      setSelectedProjects(array);
-      // console.log(selectedProjects +'ahoj')
+  //     const array = []
+  //     var obj = Object.values(projects);
+  //     for (let i = 0; i < projectsLength; i++) { 
+  //         const response2 = await fetch('http://localhost:3000/projects/' + obj[i].id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+  //         array.push(await response2.json())
+  //     }
+  //     setSelectedProjects(array);
+  //     // console.log(selectedProjects +'ahoj')
 
-    } catch(err){
-      console.error(err);
-    }
-  }
+  //   } catch(err){
+  //     console.error(err);
+  //   }
+  // }
 
   const onSubmit = async (name, description, deadline) =>{
     try {
-      console.log(name, description, GLOBAL.id)
-      const response = await fetch('http://localhost:3000/projects/', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
-          body: JSON.stringify({
-            name:name, 
-            description: description,
-            deadline: deadline, 
-            owner: GLOBAL.id,
-          })
-      })
-      projectsInfo();
+      // console.log(name, description, GLOBAL.id)
+      // const response = await fetch('http://localhost:3000/projects/', {
+      //     method: 'POST',
+      //     headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
+      //     body: JSON.stringify({
+      //       name:name, 
+      //       description: description,
+      //       deadline: deadline, 
+      //       owner: GLOBAL.id,
+      //     })
+      // })
+      // projectsInfo();
+      global.socket.emit('createProject', name, description, deadline, GLOBAL.id)
+      global.socket.emit('loadProjects', GLOBAL.id)
       setChange(false);
     }
     catch (err){
@@ -94,8 +96,13 @@ const WorkspaceScreen = () => {
   }
 
   useEffect( async () => {
-    projectsInfo()
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      global.socket.emit('loadProjects', GLOBAL.id)
+      global.socket.on('loadProjects', (arg) => {
+        setProjects(arg)
+      })
+    })
+  }, [navigation]);
 
   return (
     <View style={{backgroundColor: '#F7F9FC', flex: 1}}>

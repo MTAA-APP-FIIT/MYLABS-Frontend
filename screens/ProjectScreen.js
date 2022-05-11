@@ -41,39 +41,50 @@ const ProjectScreen = ({route, navigation}) => {
     
   );
 
-  const projectInfo = async () => {
-    try{
-      const response = await fetch(`http://localhost:3000/projects/${projectId}`, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
-      const jsonRes = await response.json();
-      setProject(jsonRes)
-    } catch{
-      console.error(error)
-    }
-  }
+  // const projectInfo = async () => {
+  //   try{
+  //     const response = await fetch(`http://localhost:3000/projects/${projectId}`, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+  //     const jsonRes = await response.json();
+  //     setProject(jsonRes)
+  //   } catch{
+  //     console.error(error)
+  //   }
+  // }
 
-  const tasksInfo = async () => {
-    try{
-      const response = await fetch(`http://localhost:3000/tasks/project/${projectId}`, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
-      const jsonRes = await response.json();
-      setTasksLength(jsonRes.length)
-      setTasks(jsonRes)
+  // const tasksInfo = async () => {
+  //   try{
+  //     console.log(projectId)
+  //     const response = await fetch(`http://localhost:3000/tasks/project/${projectId}`, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+  //     const jsonRes = await response.json();
+  //     setTasksLength(jsonRes.length)
+  //     setTasks(jsonRes)
 
-      const array = []
-      var obj = Object.values(tasks);
-      for (let i = 0; i < tasksLength; i++) { 
-          const response2 = await fetch('http://localhost:3000/tasks/' + obj[i].id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
-          array.push(await response2.json())
-      }
-      setSelectedTasks(array)
-    } catch (err){
+  //     const array = []
+  //     var obj = Object.values(tasks);
+  //     for (let i = 0; i < tasksLength; i++) { 
+  //         const response2 = await fetch('http://localhost:3000/tasks/' + obj[i].id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+  //         array.push(await response2.json())
+  //     }
+  //     setSelectedTasks(array)
+  //   } catch (err){
       
-    }
-  }
+  //   }
+  // }
 
   useEffect(() => {
-    projectInfo();
-    tasksInfo();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      global.socket.emit('loadProject', projectId)
+      global.socket.emit('loadProjectTasks', projectId)
+      global.socket.on('loadProject', (arg) => {
+        setProject(arg)
+      })
+      global.socket.on('loadProjectTasks', (arg) => {
+        setTasks(arg)
+      })
+    })
+    // projectInfo();
+    // tasksInfo();
+  }, [navigation]);
 
 
   return (

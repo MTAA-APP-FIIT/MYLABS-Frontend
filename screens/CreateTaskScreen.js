@@ -57,6 +57,11 @@ const CreateTaskScreen = ({navigation}) => {
         setMessage("Fill all fields");
         return false
       }
+      if (!isNumeric(projectId)){
+        setIsError(true);
+        setMessage("Wrong project ID format. It must be number...");
+        return false
+      }
       if (!isCorrectFormat(start)){
         setIsError(true);
         setMessage("Wrong start format. Correct is: yyyy-mm-dd");
@@ -73,20 +78,21 @@ const CreateTaskScreen = ({navigation}) => {
 
   const onSubmit = async () =>{
     try {
-      console.log(name, description, start, end, notes, GLOBAL.id)
-      const response = await fetch('http://localhost:3000/tasks/', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
-          body: JSON.stringify({
-            name:name, 
-            description: description, 
-            start: start, 
-            end: end, 
-            owner: GLOBAL.id,
-            project_id: projectId,
-            notes: notes
-          })
-      })
+      // console.log(name, description, start, end, notes, GLOBAL.id)
+      // const response = await fetch('http://localhost:3000/tasks/', {
+      //     method: 'POST',
+      //     headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
+      //     body: JSON.stringify({
+      //       name:name, 
+      //       description: description, 
+      //       start: start, 
+      //       end: end, 
+      //       owner: GLOBAL.id,
+      //       project_id: projectId,
+      //       notes: notes
+      //     })
+      // })
+      global.socket.emit('createTask', name, description, start, end, notes, GLOBAL.id, projectId)
     }
     catch (err){
       console.log(err)
@@ -149,7 +155,7 @@ const CreateTaskScreen = ({navigation}) => {
                 <TouchableOpacity style={styles.btnSecondary} onPress={() => {
                   if(validator()){
                     onSubmit()
-                    navigation.navigate('WorkspaceSchedule')
+                    navigation.navigate('Workspace')
                   }
                 }}>
                     <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>

@@ -8,7 +8,7 @@ GLOBAL = require('../Global');
 const EditTaskScreen = ({route, navigation}) => {
 
     const taskId = route.params.taskId
-    console.log(taskId)
+    // console.log(taskId)
     const [result, setResult] = useState([]);
     const [name, onChangeName] = useState("");
     const [description, onChangeDescription] = useState("");
@@ -94,8 +94,10 @@ const EditTaskScreen = ({route, navigation}) => {
 
 
   useEffect(() => {
-    taskInfo();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      taskInfo();
+     })
+   }, [navigation]);
 
   const onSubmit = async () =>{
     const response = await fetch('http://localhost:3000/tasks/' + taskId, {
@@ -112,7 +114,7 @@ const EditTaskScreen = ({route, navigation}) => {
             state: 1
         })
     })
-        
+    global.socket.emit('taskChange', taskId)
   }
 
     return (
@@ -158,7 +160,7 @@ const EditTaskScreen = ({route, navigation}) => {
                 <TouchableOpacity style={styles.btnSecondary} onPress={() => {
                   if(validator()){
                     onSubmit()
-                    navigation.navigate('WorkspaceSchedule')
+                    navigation.navigate('Workspace')
                   }
                 }}>
                     <LinearGradient colors={['#7facd6', '#e9b7d4']} style={styles.Gradient} end={{x:0.9,y:0.4}}>

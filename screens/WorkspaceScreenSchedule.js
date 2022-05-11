@@ -10,15 +10,15 @@ GLOBAL = require('../Global');
 const WorkspaceScreen = ({navigation}) => {
   const [tasks, setTasks] = useState([]);
 
-  const tasksInfo = async () => {
-    try{
-      const response = await fetch(`http://localhost:3000/tasks/owner/${GLOBAL.id}`, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
-      const jsonRes = await response.json();
-      setTasks(jsonRes)
-    } catch (err){
+  // const tasksInfo = async () => {
+  //   try{
+  //     const response = await fetch(`http://localhost:3000/tasks/owner/${GLOBAL.id}`, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+  //     const jsonRes = await response.json();
+  //     setTasks(jsonRes)
+  //   } catch (err){
       
-    }
-  }
+  //   }
+  // }
 
   const renderItem = ({ item }) => (
     <Item name={item.name} end={item.end} id={item.id}/>
@@ -44,8 +44,13 @@ const WorkspaceScreen = ({navigation}) => {
   );
 
   useEffect(() => {
-    tasksInfo();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      global.socket.emit('loadTasks', GLOBAL.id)
+      global.socket.on('loadTasks', (arg) => {
+        setTasks(arg)
+      })
+    })
+  }, [navigation]);
 
   return (
     <View style={{backgroundColor: '#F7F9FC', flex: 1}}>

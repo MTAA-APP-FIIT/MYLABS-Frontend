@@ -8,8 +8,8 @@ import { useNavigation } from '@react-navigation/native';
 GLOBAL = require('../Global');
 
 
-const HomeScreen = () => {
-  const navigation = useNavigation();
+const HomeScreen = ({navigation}) => {
+  // const navigation = useNavigation();
   const [projects, setProjects] = useState([]);
   const [projectsLength, setProjectsLength] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState([]);
@@ -38,56 +38,55 @@ const HomeScreen = () => {
       </View>
     
   );
-
-  const socketEmits = async () => {
-    global.socket.emit('/projects/owner/:owner', GLOBAL.id, (response) =>{
-      console.log(response)
-      setJsonRes(response.projects)
-    })
-  }
   
-  const projectsInfo = async () => {
-    try{
-      const response = await fetch(`http://localhost:3000/projects/owner/${GLOBAL.id}`, {
-        headers: {
-          'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'
-        },
-      })
-      // console.log(jsonRes)
+  // const projectsInfo = async () => {
+  //   try{
+  //     const response = await fetch(`http://localhost:3000/projects/owner/${GLOBAL.id}`, {
+  //       headers: {
+  //         'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'
+  //       },
+  //     })
+  //     // console.log(jsonRes)
      
-      // global.socket.on('RES/projects/owner/:owner', (arg) => {
-      //   setJsonRes(arg.projects)
-      // })
-      // setJsonRes(response)
-      const jsonRes = await response.json();
+  //     // global.socket.on('RES/projects/owner/:owner', (arg) => {
+  //     //   setJsonRes(arg.projects)
+  //     // })
+  //     // setJsonRes(response)
+  //     const jsonRes = await response.json();
       
-      console.log('len ' +jsonRes.length)
+  //     console.log('len ' +jsonRes.length)
 
       
-      setProjectsLength(jsonRes.length)
-      setProjects(jsonRes)
+  //     setProjectsLength(jsonRes.length)
+  //     setProjects(jsonRes)
 
-      const array = []
-      var obj = Object.values(projects);
-      for (let i = 0; i < projectsLength; i++) { 
-          const response2 = await fetch('http://localhost:3000/projects/' + obj[i].id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
-          array.push(await response2.json())
-      }
-      setSelectedProjects(array)
-      // console.log(selectedProjects +'ahoj')
+  //     const array = []
+  //     var obj = Object.values(projects);
+  //     for (let i = 0; i < projectsLength; i++) { 
+  //         const response2 = await fetch('http://localhost:3000/projects/' + obj[i].id, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+  //         array.push(await response2.json())
+  //     }
+  //     setSelectedProjects(array)
+  //     // console.log(selectedProjects +'ahoj')
 
 
-    } catch(err){
-      console.error(err)
-    }
+  //   } catch(err){
+  //     console.error(err)
+  //   }
 
-  }
+  // }
 
 
   useEffect(() => {
-    // socketEmits();
-    projectsInfo();
-  }, []);
+    // // socketEmits();
+    // projectsInfo();
+    const unsubscribe = navigation.addListener('focus', () => {
+      global.socket.emit('loadProjects', GLOBAL.id)
+      global.socket.on('loadProjects', (arg) => {
+        setProjects(arg)
+      })
+    })
+  }, [navigation]);
 
   return (
     <View style={{backgroundColor: '#F7F9FC', flex: 1}}>

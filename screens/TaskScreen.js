@@ -10,30 +10,43 @@ const TaskScreen = ({route, navigation}) => {
   const taskId = route.params.taskId
   const [result, setResult] = useState([]);
 
-  const taskInfo = async () => {
-    try{
-      const response = await fetch('http://localhost:3000/tasks/' + taskId, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
-      const jsonRes = await response.json();
-      console.log(jsonRes)
-      setResult(jsonRes)
-    } catch{
-      console.error(error)
-    }
+  // const taskInfo = async () => {
+  //   try{
+  //     const response = await fetch('http://localhost:3000/tasks/' + taskId, {headers: {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'}})
+  //     const jsonRes = await response.json();
+  //     // console.log(jsonRes)
+  //     setResult(jsonRes)
+  //   } catch{
+  //     console.error(error)
+  //   }
     
-  }
+  // }
 
   const deleteTask = async () =>{
-    const response = await fetch('http://localhost:3000/tasks/' + taskId , {
-        method: 'DELETE',
-        headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
+    // const response = await fetch('http://localhost:3000/tasks/' + taskId , {
+    //     method: 'DELETE',
+    //     headers: {'Content-Type': 'application/json','authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic2ltb25AZ21haWwuY29tIiwiaWF0IjoxNjQ3OTc0NjczfQ.F14QJJGDoGkk8Cl67gQWVui23v5vlyu1K-lqWUPgP08'},
 
-    })
+    // })
+    global.socket.emit('deleteTask', taskId)
         
   }
 
+  global.socket.on('taskChange', (arg) => {
+    if (result.id == arg.id){
+      console.log(arg)
+      setResult(arg)
+    }
+  })
+
   useEffect(() => {
-    taskInfo();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      global.socket.emit('loadTask', taskId)
+      global.socket.on('loadTask', (arg) => {
+        setResult(arg)
+      })
+    })
+  }, [navigation]);
 
   return (
     
